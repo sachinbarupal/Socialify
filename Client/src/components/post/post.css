@@ -68,6 +68,7 @@
 }
 
 .postLikeCounter {
+  cursor: default;
   font-size: 15px;
 }
 
