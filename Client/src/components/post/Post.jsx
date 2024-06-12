@@ -7,7 +7,7 @@ export default function Post({ Post }) {
   const [likes, setLikes] = useState(Post.like);
   const [isLiked, setIsliked] = useState(false);
   const { photo, desc, date, comment, userId } = Post;
-  const { username, profilePicture } = Users.find((user) => user.id == userId);
+  const { username, profilePicture } = Users.find((user) => user.id === userId);
 
   const likeHandler = () => {
     isLiked ? setLikes(likes - 1) : setLikes(likes + 1);
