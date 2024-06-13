@@ -1,11 +1,50 @@
-import { useState } from "react";
+import { useContext, useRef, useState } from "react";
 import "./login.css";
 import { useNavigate } from "react-router-dom";
-import Feed from "../../components/feed/Feed";
-
+import { login } from "../../API_CALLS";
+import { AuthContext } from "../../context/AuthContext";
+import { CircularProgress } from "@mui/material";
+import axios from "axios";
 export default function Login({ isLogin }) {
-  const [login, setLogin] = useState(isLogin);
+  const [isLoginPage, setIsLoginPage] = useState(isLogin);
   const navigate = useNavigate();
+  const { user, isFetching, error, dispatch } = useContext(AuthContext);
+
+  const email = useRef();
+  const username = useRef();
+  const password = useRef();
+  const confPassword = useRef();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (isLoginPage) {
+      login(
+        { email: email.current.value, password: password.current.value },
+        dispatch
+      );
+    } else {
+      if (confPassword.current.value !== password.current.value)
+        return confPassword.current.setCustomValidity(
+          "Passwords do not match !!"
+        );
+
+      const user = {
+        username: username.current.value,
+        email: email.current.value,
+        password: password.current.value,
+      };
+
+      try {
+        await axios.post("/auth/register", user);
+        setIsLoginPage(!isLoginPage);
+        navigate("/login");
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+
+  console.log(user);
   return (
     <div className="login">
       <div className="loginWrapper">
@@ -15,30 +54,64 @@ export default function Login({ isLogin }) {
           <span className="loginDesc">SocialMedia for Sociopaths.</span>
         </div>
         <div className="loginRight">
-          <div
+          <form
+            onSubmit={handleSubmit}
             className="loginBox"
-            style={{ height: login ? "300px" : "400px" }}
+            style={{ height: isLoginPage ? "300px" : "400px" }}
           >
-            {!login && <input className="loginInput" placeholder="Username" />}
-            <input className="loginInput" placeholder="Email" />
-            <input className="loginInput" placeholder="Password" />
-            {!login && (
-              <input className="loginInput" placeholder="Confirm Password" />
+            {!isLoginPage && (
+              <input
+                required
+                className="loginInput"
+                ref={username}
+                placeholder="Username"
+              />
             )}
-            <button className="loginButton">
-              {login ? "Log In" : "Sign Up"}
+            <input
+              type="email"
+              required
+              ref={email}
+              className="loginInput"
+              placeholder="Email"
+            />
+            <input
+              ref={password}
+              required
+              type="password"
+              // minLength="8"
+              className="loginInput"
+              placeholder="Password"
+            />
+            {!isLoginPage && (
+              <input
+                ref={confPassword}
+                required
+                type="password"
+                // minLength="8"
+                className="loginInput"
+                placeholder="Confirm Password"
+              />
+            )}
+            <button type="submit" disabled={isFetching} className="loginButton">
+              {isFetching ? (
+                <CircularProgress color="inherit" size="30px" />
+              ) : isLoginPage ? (
+                "Log In"
+              ) : (
+                "Sign Up"
+              )}
             </button>
 
-            {login && (
+            {isLoginPage && (
               <span style={{ cursor: "pointer" }} className="loginForgot">
                 Forgot Password?
               </span>
             )}
-            {!login && (
+            {!isLoginPage && !isFetching && (
               <span
                 style={{ cursor: "pointer" }}
                 onClick={() => {
-                  setLogin(!login);
+                  setIsLoginPage(!isLoginPage);
                   navigate("/login");
                 }}
                 className="loginForgot"
@@ -46,19 +119,23 @@ export default function Login({ isLogin }) {
                 Already have an Account?
               </span>
             )}
-            {login && (
+            {isLoginPage && (
               <button
                 className="loginRegisterButton"
+                disabled={isFetching}
                 onClick={() => {
-                  setLogin(!login);
+                  setIsLoginPage(!isLoginPage);
                   navigate("/register");
                 }}
               >
-                Create a New Account
+                {isFetching ? (
+                  <CircularProgress color="inherit" size="30px" />
+                ) : (
+                  "Create a New Account"
+                )}
               </button>
             )}
-          </div>
-          <Feed />
+          </form>
         </div>
       </div>
     </div>
