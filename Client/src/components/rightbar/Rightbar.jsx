@@ -1,16 +1,17 @@
 import { Users } from "../../DummyData";
 import "./rightbar.css";
 
-export default function Rightbar({ profile }) {
+export default function Rightbar({ user }) {
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const HomeRightBar = () => (
     <>
       <div className="birthdayContainer">
-        <img className="birthdayImg" src="assets/gift.png" alt="birthday" />
+        <img className="birthdayImg" src={`${PF}gift.png`} alt="birthday" />
         <span className="birthdayText">
           <b>Mohit</b> and <b>3 other friends</b> have birthday today.
         </span>
       </div>
-      <img className="rightbarAd" src="assets/ad.png" alt="ad" />
+      <img className="rightbarAd" src={`${PF}ad.png`} alt="ad" />
       <h4 className="rightbarTitle">Online Friends</h4>
       <ul className="rightbarFriendList">
         {Users.map((user) => (
@@ -25,16 +26,16 @@ export default function Rightbar({ profile }) {
       <h4 className="rightbarTitle">User Information</h4>
       <div className="rightbarInfo">
         <div className="rightbarInfoItem">
-          <span className="rightbarInfoKey">City</span>
-          <span className="rightbarInfoValue">New York</span>
+          <span className="rightbarInfoKey">City : </span>
+          <span className="rightbarInfoValue">{user.city}</span>
         </div>
         <div className="rightbarInfoItem">
           <span className="rightbarInfoKey">From : </span>
-          <span className="rightbarInfoValue">Nadrid</span>
+          <span className="rightbarInfoValue">{user.from}</span>
         </div>
         <div className="rightbarInfoItem">
-          <span className="rightbarInfoKey">Relationship</span>
-          <span className="rightbarInfoValue">Mingle</span>
+          <span className="rightbarInfoKey">Relationship :</span>
+          <span className="rightbarInfoValue">{user.relationship}</span>
         </div>
       </div>
       <h4 className="rightbarTitle">User Friends</h4>
@@ -42,7 +43,7 @@ export default function Rightbar({ profile }) {
         <div className="rightbarFollowing">
           <img
             className="rightbarFollowingImg"
-            src="assets/person/2.jpeg"
+            src={`${PF}person/2.jpeg`}
             alt="userImage"
           />
           <span className="rightbarFollowingName">John Carter</span>
@@ -50,7 +51,7 @@ export default function Rightbar({ profile }) {
         <div className="rightbarFollowing">
           <img
             className="rightbarFollowingImg"
-            src="assets/person/2.jpeg"
+            src={`${PF}person/2.jpeg`}
             alt="userImage"
           />
           <span className="rightbarFollowingName">John Carter</span>
@@ -58,7 +59,7 @@ export default function Rightbar({ profile }) {
         <div className="rightbarFollowing">
           <img
             className="rightbarFollowingImg"
-            src="assets/person/2.jpeg"
+            src={`${PF}person/2.jpeg`}
             alt="userImage"
           />
           <span className="rightbarFollowingName">John Carter</span>
@@ -70,19 +71,20 @@ export default function Rightbar({ profile }) {
   return (
     <div className="rightbar">
       <div className="rightbarWrapper">
-        {profile ? <ProfileRightBar /> : <HomeRightBar />}
+        {user ? <ProfileRightBar /> : <HomeRightBar />}
       </div>
     </div>
   );
 }
 
 export function OnlineFriend({ user }) {
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   return (
     <li className="rightbarFriend">
       <div className="rightbarFriendImgContainer">
         <img
           className="rightbarFriendImg"
-          src={user.profilePicture}
+          src={PF + user.profilePicture}
           alt="friend"
         />
         <span className="rightbarOnline"></span>

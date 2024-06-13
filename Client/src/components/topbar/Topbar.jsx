@@ -1,5 +1,7 @@
-import { Search, Person, Chat, Notifications } from "@mui/icons-material";
 import "./topbar.css";
+import { Search, Person, Chat, Notifications } from "@mui/icons-material";
+import { Link } from "react-router-dom";
+
 export default function Topbar() {
   return (
     // NAV BAR
@@ -7,7 +9,9 @@ export default function Topbar() {
       {/*LEFT  */}
       <div className="topbarLeft">
         {/* LOGO */}
-        <span className="logo">Socialify</span>
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <span className="logo">Socialify</span>
+        </Link>
       </div>
 
       {/* CENTER */}

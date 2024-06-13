@@ -54,11 +54,12 @@ export default function Sidebar() {
 }
 
 export function Friend({ friend }) {
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   return (
     <li className="sidebarFriend">
       <img
         className="sidebarFriendImg"
-        src={friend.profilePicture}
+        src={PF + friend.profilePicture}
         alt="friendProfilePic"
       />
       <span className="sidebarFriendName">{friend.username}</span>

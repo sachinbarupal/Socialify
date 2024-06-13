@@ -1,8 +1,11 @@
 import { useState } from "react";
 import "./login.css";
+import { useNavigate } from "react-router-dom";
+import Feed from "../../components/feed/Feed";
 
-export default function Login() {
-  const [login, setLogin] = useState(true);
+export default function Login({ isLogin }) {
+  const [login, setLogin] = useState(isLogin);
+  const navigate = useNavigate();
   return (
     <div className="login">
       <div className="loginWrapper">
@@ -34,7 +37,10 @@ export default function Login() {
             {!login && (
               <span
                 style={{ cursor: "pointer" }}
-                onClick={() => setLogin(!login)}
+                onClick={() => {
+                  setLogin(!login);
+                  navigate("/login");
+                }}
                 className="loginForgot"
               >
                 Already have an Account?
@@ -43,12 +49,16 @@ export default function Login() {
             {login && (
               <button
                 className="loginRegisterButton"
-                onClick={() => setLogin(!login)}
+                onClick={() => {
+                  setLogin(!login);
+                  navigate("/register");
+                }}
               >
                 Create a New Account
               </button>
             )}
           </div>
+          <Feed />
         </div>
       </div>
     </div>

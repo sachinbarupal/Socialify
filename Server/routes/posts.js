@@ -86,14 +86,27 @@ router.get("/post/:postId", async (req, res) => {
 });
 
 // Get Timeline Posts
-router.get("/timeline", async (req, res) => {
+router.get("/timeline/:userId", async (req, res) => {
   try {
-    const currentUser = await User.findById(req.body._id);
+    const currentUser = await User.findById(req.params.userId);
     const userPosts = await Post.find({ userId: currentUser._id });
     const friendPosts = await Promise.all(
       currentUser.following.map((friendId) => Post.find({ userId: friendId }))
     );
     res.status(200).json(userPosts.concat(...friendPosts));
+  } catch (err) {
+    console.log("Error In Fetching Timeline", err);
+    res.status(403).json({ msg: "Error Aii" });
+  }
+});
+
+// Get Users Posts
+router.get("/user/:username", async (req, res) => {
+  try {
+    const currentUser = await User.findOne({ username: req.params.username });
+    const userPosts = await Post.find({ userId: currentUser._id });
+
+    res.status(200).json(userPosts);
   } catch (err) {
     console.log("Error In Fetching Timeline", err);
     res.status(403).json({ msg: "Error Aii" });
