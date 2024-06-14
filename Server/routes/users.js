@@ -66,6 +66,23 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/friends/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    const friends = await Promise.all(
+      user.following.map((followingId) => User.findById(followingId))
+    );
+
+    let friendList = friends.map(({ _id, username, profilePicture }) => {
+      return { _id, username, profilePicture };
+    });
+    res.status(200).json(friendList);
+  } catch (err) {
+    res.status(500).json({ msg: "Error AAi" });
+  }
+});
+
 // Follow User
 router.put("/follow/:id", async (req, res) => {
   const currentUserId = req.body._id;
@@ -119,7 +136,7 @@ router.put("/unfollow/:id", async (req, res) => {
 
     res.status(200).json({ msg: "User has been unfollowed successfully !!" });
   } catch (err) {
-    console.log("Error in Following User", err);
+    console.log("Error in Unfollowing User", err);
     res.status(403).json({ msg: "Error Aii" });
   }
 });

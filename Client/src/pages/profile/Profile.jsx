@@ -1,15 +1,15 @@
+import "./profile.css";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Topbar from "../../components/topbar/Topbar";
 import Feed from "../../components/feed/Feed";
 import Rightbar from "../../components/rightbar/Rightbar";
-import "./profile.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
 export default function Profile() {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(false);
   const username = useParams().username;
   useEffect(() => {
     const fetchUser = async () => {
@@ -18,6 +18,8 @@ export default function Profile() {
     };
     fetchUser();
   }, [username]);
+
+  if (!user) return <Topbar />;
 
   return (
     <>
@@ -35,7 +37,6 @@ export default function Profile() {
                 }
                 className="profileCoverImg"
                 alt="cover"
-                loading="lazy"
               />
               <img
                 src={
@@ -45,7 +46,6 @@ export default function Profile() {
                 }
                 className="profileUserImg"
                 alt="cover"
-                loading="lazy"
               />
             </div>
             <div className="profileInfo">

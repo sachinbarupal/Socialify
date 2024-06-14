@@ -1,3 +1,4 @@
+import "./sidebar.css";
 import {
   RssFeed,
   Chat,
@@ -9,7 +10,6 @@ import {
   Event,
   School,
 } from "@mui/icons-material";
-import "./sidebar.css";
 import { Users } from "../../DummyData";
 export function ListItem({ Icon, name }) {
   return (

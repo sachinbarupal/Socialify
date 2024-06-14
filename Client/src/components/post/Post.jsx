@@ -1,28 +1,37 @@
+import "./post.css";
 import { MoreVert } from "@mui/icons-material";
 import axios from "axios";
-import "./post.css";
 import { format } from "timeago.js";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function Post({ Post }) {
-  const [likes, setLikes] = useState(Post.likes);
-  const [isLiked, setIsliked] = useState(false);
-  const [user, setUser] = useState({});
+  const [likes, setLikes] = useState(Post.likes.length);
+  const { user } = useContext(AuthContext);
+  const [isLiked, setIsliked] = useState(Post.likes.includes(user._id));
+  const [postUser, setPostUser] = useState({});
   const { Image, description, createdAt, userId } = Post;
-
+  // console.log(isLiked);
   useEffect(() => {
     const fetchUser = async () => {
       const response = await axios.get(`/users?userId=${userId}`);
-      setUser(response.data);
+      setPostUser(response.data);
     };
     fetchUser();
   }, [userId]);
 
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-  const likeHandler = () => {
-    isLiked ? setLikes(likes - 1) : setLikes(likes + 1);
-    setIsliked(!isLiked);
+  const likeHandler = async () => {
+    try {
+      await axios.put(`posts/like/${Post._id}`, { userId: user._id });
+      isLiked ? setLikes(likes - 1) : setLikes(likes + 1);
+
+      setIsliked(!isLiked);
+    } catch (err) {
+      // console.log(err);
+      alert("Err");
+    }
   };
 
   return (
@@ -30,13 +39,20 @@ export default function Post({ Post }) {
       <div className="postWrapper">
         <PostTop
           date={format(createdAt)}
-          username={user.username}
-          userPofile={PF + "person/noAvatar.png"}
+          username={postUser.username}
+          userPofile={
+            postUser.profilePicture
+              ? PF + postUser.profilePicture
+              : PF + "person/noAvatar.png"
+          }
         />
-        <PostCenter postImage={PF + Image} postText={description} />
+        <PostCenter
+          postImage={Image ? PF + Image : null}
+          postText={description}
+        />
         <PostBottom
           // comments={comment}
-          likes={likes.length}
+          likes={likes}
           likeHandler={likeHandler}
         />
       </div>
@@ -65,9 +81,9 @@ export function PostTop({ date, username, userPofile }) {
 }
 export function PostCenter({ postImage, postText }) {
   return (
-    <div className="postCenter">
-      <span className="postText">{postText}</span>
-      <img className="postImg" src={postImage} alt="postImage" />
+    <div style={{ margin: postText ? "20px 0" : "0" }}>
+      {postText && <span className="postText">{postText}</span>}
+      {postImage && <img className="postImg" src={postImage} alt="postImage" />}
     </div>
   );
 }

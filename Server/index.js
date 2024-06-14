@@ -1,6 +1,8 @@
 // For Creating HTTP Server
 const express = require("express");
 const app = express();
+const multer = require("multer");
+const path = require("path");
 
 // For storing secret variable in the env so that no one can see them
 const dotenv = require("dotenv");
@@ -18,6 +20,8 @@ dotenv.config();
 const connectToDB = require("./config/database");
 connectToDB();
 
+app.use("/Images", express.static(path.join(__dirname, "public/Images")));
+
 // Middlewares
 
 // Body Parser
@@ -26,6 +30,27 @@ app.use(express.json());
 app.use(helmet());
 // Logs requests
 app.use(morgan("common"));
+
+// Setup Upload via Multer
+const storage = multer.diskStorage({
+  destination: (req, Image, cb) => {
+    cb(null, "public/Images");
+  },
+  filename: (req, Image, cb) => {
+    cb(null, req.body.name);
+  },
+});
+
+const upload = multer({ storage });
+
+app.post("/api/upload", upload.single("Image"), (req, res) => {
+  try {
+    res.status(200).json("File Uploaded Successfully");
+  } catch (err) {
+    console.log("err in upload");
+    res.status(403).json("Error Aari");
+  }
+});
 
 // Routes
 const userRoutes = require("./routes/users");

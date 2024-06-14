@@ -1,5 +1,5 @@
-import { useContext, useRef, useState } from "react";
 import "./login.css";
+import { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../API_CALLS";
 import { AuthContext } from "../../context/AuthContext";
@@ -39,12 +39,12 @@ export default function Login({ isLogin }) {
         setIsLoginPage(!isLoginPage);
         navigate("/login");
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     }
   };
 
-  console.log(user);
+  // console.log(user);
   return (
     <div className="login">
       <div className="loginWrapper">
