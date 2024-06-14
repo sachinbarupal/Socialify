@@ -66,6 +66,22 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Get All Users
+router.get("/all", async (req, res) => {
+  try {
+    console.log("id", req.query._id);
+    const users = await User.find({ _id: { $ne: req.query._id } });
+
+    res.status(200).json(
+      users.map(({ _id, username, profilePicture }) => {
+        return { _id, username, profilePicture };
+      })
+    );
+  } catch (err) {
+    res.status(403).json({ msg: "Error" });
+  }
+});
+
 router.get("/friends/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id);

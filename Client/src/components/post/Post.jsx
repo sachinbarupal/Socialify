@@ -12,7 +12,8 @@ export default function Post({ Post }) {
   const [isLiked, setIsliked] = useState(Post.likes.includes(user._id));
   const [postUser, setPostUser] = useState({});
   const { Image, description, createdAt, userId } = Post;
-  // console.log(isLiked);
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+
   useEffect(() => {
     const fetchUser = async () => {
       const response = await axios.get(`/users?userId=${userId}`);
@@ -21,16 +22,15 @@ export default function Post({ Post }) {
     fetchUser();
   }, [userId]);
 
-  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const likeHandler = async () => {
     try {
-      await axios.put(`posts/like/${Post._id}`, { userId: user._id });
+      await axios.put(`/posts/like/${Post._id}`, { userId: user._id });
       isLiked ? setLikes(likes - 1) : setLikes(likes + 1);
 
       setIsliked(!isLiked);
     } catch (err) {
-      // console.log(err);
-      alert("Err");
+      alert("Post me fasa");
+      console.log(err);
     }
   };
 

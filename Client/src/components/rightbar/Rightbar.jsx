@@ -6,12 +6,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { Add, Remove } from "@mui/icons-material";
 
-export default function Rightbar({ user }) {
+export default function Rightbar({ user, isProfile }) {
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const [friends, setFriends] = useState([]);
   const { user: currentUser, dispatch } = useContext(AuthContext);
-  const [followed, setFollowed] = useState(
-    currentUser.following.includes(user?._id)
-  );
+  const [followed, setFollowed] = useState(false);
+
   const nav = useNavigate();
 
   useEffect(() => {
@@ -25,13 +25,8 @@ export default function Rightbar({ user }) {
       }
     };
     setFollowed(currentUser.following.includes(user?._id));
-    if (user) getFriends();
+    getFriends();
   }, [user, currentUser.following]);
-  // console.log(currentUser.following);
-  // console.log(user?._id);
-  // console.log(currentUser.following.includes(user?._id));
-  // console.log("followed", followed);
-  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const HomeRightBar = () => (
     <>
       <div className="birthdayContainer">
@@ -132,7 +127,7 @@ export default function Rightbar({ user }) {
   return (
     <div className="rightbar">
       <div className="rightbarWrapper">
-        {user ? <ProfileRightBar /> : <HomeRightBar />}
+        {isProfile ? <ProfileRightBar /> : <HomeRightBar />}
       </div>
     </div>
   );

@@ -13,7 +13,6 @@ export default function Feed({ username }) {
       const response = username
         ? await axios.get(`/posts/user/${username}`)
         : await axios.get(`/posts/timeline/${user._id}`);
-      // console.log(response.data);
       setPosts(
         response.data.sort(
           (post1, post2) =>
