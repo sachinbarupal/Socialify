@@ -16,9 +16,11 @@
 }
 
 .date {
-  /* flex: 1; */
-  margin-right: 5px;
+  flex: 1;
   align-self: center;
+  /* margin-left: auto; */
+
+  /* justify-self: flex-end; */
   color: gray;
   font-size: 12px;
 }

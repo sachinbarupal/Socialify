@@ -54,8 +54,9 @@ function Comments({ comments, setComments, postId }) {
             <span className="username">{comment.username}</span>
             <p className="commentText">{comment.comment}</p>
           </div>
-          <hr />
-          <span className="date">{format(comment.createdAt)}</span>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <span className="date">{format(comment.createdAt)}</span>
+          </div>
         </div>
       ))}
     </div>

@@ -23,7 +23,7 @@ function App() {
     },
     {
       path: "/profile/:username",
-      element: <Profile />,
+      element: user ? <Profile /> : <Navigate to="/login" />,
     },
   ]);
   return <RouterProvider router={router} />;
