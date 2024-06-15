@@ -1,21 +1,28 @@
 import "./topbar.css";
 import { Search, Person, Chat, Notifications } from "@mui/icons-material";
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import getConfig from "../../config";
 const { SERVER_URI } = getConfig();
 export default function Topbar() {
   const { user } = useContext(AuthContext);
   const PF = `${SERVER_URI}/Images/`;
+  const location = useLocation();
 
+  const handleClick = (e) => {
+    if (location.pathname === "/") {
+      e.preventDefault(); // Prevent the default link behavior
+      window.location.reload(); // Reload the page
+    }
+  };
   return (
     // NAV BAR
     <div className="topbarContainer">
       {/*LEFT  */}
       <div className="topbarLeft">
         {/* LOGO */}
-        <Link to="/" style={{ textDecoration: "none" }}>
+        <Link to="/" onClick={handleClick} style={{ textDecoration: "none" }}>
           <span className="logo">Socialify</span>
         </Link>
       </div>

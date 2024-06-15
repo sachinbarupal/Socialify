@@ -1,5 +1,10 @@
 import "./post.css";
-import { MoreVert } from "@mui/icons-material";
+import {
+  Cancel,
+  Favorite,
+  FavoriteBorderOutlined,
+  MoreVert,
+} from "@mui/icons-material";
 import axios from "axios";
 import { format } from "timeago.js";
 import { useContext, useEffect, useState } from "react";
@@ -59,6 +64,7 @@ export default function Post({ Post }) {
         <PostBottom
           // comments={comment}
           likes={likes}
+          isLiked={isLiked}
           likeHandler={likeHandler}
         />
       </div>
@@ -67,6 +73,7 @@ export default function Post({ Post }) {
 }
 
 export function PostTop({ date, username, userPofile }) {
+  const [showOptions, setShowOptions] = useState(false);
   return (
     <div className="postTop">
       {/* Top Left */}
@@ -80,7 +87,13 @@ export function PostTop({ date, username, userPofile }) {
 
       {/* Top  Right */}
       <div className="postTopRight">
-        <MoreVert />
+        {showOptions && <Cancel sx={{ color: "red", cursor: "pointer" }} />}
+        <div
+          style={{ cursor: "pointer" }}
+          onClick={() => setShowOptions(!showOptions)}
+        >
+          <MoreVert />
+        </div>
       </div>
     </div>
   );
@@ -93,18 +106,21 @@ export function PostCenter({ postImage, postText }) {
     </div>
   );
 }
-export function PostBottom({ comments, likes, likeHandler }) {
-  const PF = `${SERVER_URI}/Images/`;
+export function PostBottom({ comments, isLiked, likes, likeHandler }) {
   return (
     <div className="postBottom">
       <div className="postBottomLeft">
-        <img
-          className="likeIcon"
-          src={`${PF}like.png`}
-          onClick={likeHandler}
-          alt="like"
-        />
-        {/* <img className="likeIcon" src="assets/heart.png" alt="liked" /> */}
+        <div onClick={likeHandler} style={{ cursor: "pointer" }}>
+          {isLiked ? (
+            <Favorite
+              onclick={() => console.log("clicked")}
+              sx={{ color: "red" }}
+            />
+          ) : (
+            <FavoriteBorderOutlined onclick={() => console.log("clicked")} />
+          )}
+        </div>
+
         <span className="postLikeCounter">{likes} Likes</span>
       </div>
 

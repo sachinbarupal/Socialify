@@ -102,6 +102,7 @@ export function Friend({ friend }) {
       >
         <img
           className="sidebarFriendImg"
+          loading="lazy"
           src={
             friend.profilePicture
               ? PF + friend.profilePicture

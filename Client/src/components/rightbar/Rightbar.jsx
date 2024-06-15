@@ -88,65 +88,130 @@ export default function Rightbar({ user, isProfile }) {
     nav("/");
   };
 
-  const ProfileRightBar = () => (
-    <>
-      {user.username !== currentUser.username && (
-        <button onClick={followHandler} className="rightbarFollowButton">
-          {followed ? "Unfriend" : "Add Friend"}
-          {followed ? <Remove /> : <Add />}
-        </button>
-      )}
-      {user.username === currentUser.username && (
-        <button onClick={logoutHandler} className="rightbarLogoutButton">
-          LogOut
-        </button>
-      )}
+  const ProfileRightBar = () => {
+    const [newPassword, setNewPassword] = useState(null);
+    const [changePassword, setChangePassword] = useState(false);
+    const handlePasswordChange = async () => {
+      try {
+        await axios.put(`${SERVER_URI}/api/users/update/` + user._id, {
+          _id: currentUser._id,
+          password: newPassword,
+        });
 
-      <h4 className="rightbarTitle">User Information</h4>
-      <div className="rightbarInfo">
-        <div className="rightbarInfoItem">
-          <span className="rightbarInfoKey">City : </span>
-          <span className="rightbarInfoValue">{user.city}</span>
-        </div>
-        <div className="rightbarInfoItem">
-          <span className="rightbarInfoKey">From : </span>
-          <span className="rightbarInfoValue">{user.from}</span>
-        </div>
-        <div className="rightbarInfoItem">
-          <span className="rightbarInfoKey">Relationship :</span>
-          <span className="rightbarInfoValue">{user.relationship}</span>
-        </div>
-      </div>
-      <h4 className="rightbarTitle">User Friends</h4>
-
-      <div className="rightbarFollowings">
-        {isLoading ? (
-          <Skeleton variant="rectangular" width={"100%"} height={118} />
-        ) : (
-          friends.map((friend) => (
-            <Link
-              style={{ textDecoration: "none" }}
-              key={friend._id}
-              to={"/profile/" + friend.username}
-            >
-              <div className="rightbarFollowing">
-                <img
-                  className="rightbarFollowingImg"
-                  src={
-                    friend.profilePicture
-                      ? PF + friend.profilePicture
-                      : PF + "person/noAvatar.png"
-                  }
-                  alt="userImage"
-                />
-                <span className="rightbarFollowingName">{friend.username}</span>
-              </div>
-            </Link>
-          ))
+        setNewPassword(null);
+        setChangePassword(false);
+      } catch (err) {
+        alert("Password Change me Presanii!!");
+        console.log(err);
+      }
+    };
+    return (
+      <>
+        {user.username !== currentUser.username && (
+          <button onClick={followHandler} className="rightbarFollowButton">
+            {followed ? "Unfriend" : "Add Friend"}
+            {followed ? <Remove /> : <Add />}
+          </button>
         )}
-      </div>
-    </>
-  );
+        {user.username === currentUser.username && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              marginBottom: "10px",
+            }}
+          >
+            <button onClick={logoutHandler} className="rightbarLogoutButton">
+              LogOut
+            </button>
+            <div style={{ display: "flex", justifyContent: "flex-start" }}>
+              <button
+                style={{ backgroundColor: "red" }}
+                onClick={() => {
+                  setChangePassword(!changePassword);
+                  setNewPassword(null);
+                }}
+                className="rightbarLogoutButton"
+              >
+                Change Password
+              </button>
+              {newPassword && (
+                <button
+                  style={{ backgroundColor: "green" }}
+                  onClick={() => {
+                    alert("Filhal Band hai Feature");
+                  }}
+                  className="rightbarLogoutButton"
+                >
+                  OK
+                </button>
+              )}
+            </div>
+            {changePassword && (
+              <div>
+                <span>New Password</span>
+                <input
+                  onChange={(e) => {
+                    setNewPassword(e.target.value);
+                  }}
+                  style={{ alignSelf: "center", marginLeft: "5px" }}
+                  className="changePasswordInput"
+                  type="text"
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        <h4 className="rightbarTitle">User Information</h4>
+        <div className="rightbarInfo">
+          <div className="rightbarInfoItem">
+            <span className="rightbarInfoKey">City : </span>
+            <span className="rightbarInfoValue">{user.city}</span>
+          </div>
+          <div className="rightbarInfoItem">
+            <span className="rightbarInfoKey">From : </span>
+            <span className="rightbarInfoValue">{user.from}</span>
+          </div>
+          <div className="rightbarInfoItem">
+            <span className="rightbarInfoKey">Relationship :</span>
+            <span className="rightbarInfoValue">{user.relationship}</span>
+          </div>
+        </div>
+        <h4 className="rightbarTitle">User Friends</h4>
+
+        <div className="rightbarFollowings">
+          {isLoading ? (
+            <Skeleton variant="rectangular" width={"100%"} height={118} />
+          ) : (
+            friends.map((friend) => (
+              <Link
+                style={{ textDecoration: "none" }}
+                key={friend._id}
+                to={"/profile/" + friend.username}
+              >
+                <div className="rightbarFollowing">
+                  <img
+                    className="rightbarFollowingImg"
+                    src={
+                      friend.profilePicture
+                        ? PF + friend.profilePicture
+                        : PF + "person/noAvatar.png"
+                    }
+                    alt="userImage"
+                  />
+                  <span className="rightbarFollowingName">
+                    {friend.username}
+                  </span>
+                </div>
+              </Link>
+            ))
+          )}
+        </div>
+      </>
+    );
+  };
 
   return (
     <div className="rightbar">

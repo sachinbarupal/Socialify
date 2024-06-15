@@ -69,6 +69,7 @@
 
 .postLikeCounter {
   cursor: default;
+  margin-left: 5px;
   font-size: 15px;
 }
 
@@ -76,4 +77,8 @@
   cursor: pointer;
   border-bottom: 1px dashed gray;
   font-size: 15px;
+}
+
+.postTopRight {
+  display: flex;
 }

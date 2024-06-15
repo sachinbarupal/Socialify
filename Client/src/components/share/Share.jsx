@@ -25,6 +25,10 @@ export default function Share() {
   const submitHandler = async (e) => {
     try {
       e.preventDefault();
+      if (!Image && description.current.value === "") {
+        alert("Kuch to likho ya Image upload kro");
+        return;
+      }
       const newPost = {
         userId: user._id,
         description: description.current.value,
