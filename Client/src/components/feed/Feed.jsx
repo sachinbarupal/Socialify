@@ -5,11 +5,12 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 import getConfig from "../../config";
+import { CircularProgress } from "@mui/material";
 
 const { SERVER_URI } = getConfig();
 export default function Feed({ username, isProfile }) {
-  console.log(SERVER_URI);
   const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
@@ -23,9 +24,26 @@ export default function Feed({ username, isProfile }) {
             new Date(post2.createdAt) - new Date(post1.createdAt)
         )
       );
+      setIsLoading(false);
     };
+    setIsLoading(true);
     fetchPosts();
-  }, [username, user._id]);
+  }, [username, isProfile, user._id]);
+
+  if (isLoading)
+    return (
+      <div
+        className="feed"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <CircularProgress />
+      </div>
+    );
+
   return (
     <div className="feed">
       <div className="feedWrapper">

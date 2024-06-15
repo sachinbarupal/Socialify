@@ -1,11 +1,11 @@
 import "./rightbar.css";
-import { Users } from "../../DummyData";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { Add, Remove } from "@mui/icons-material";
 import getConfig from "../../config";
+import { Skeleton } from "@mui/material";
 const { SERVER_URI } = getConfig();
 
 export default function Rightbar({ user, isProfile }) {
@@ -13,8 +13,10 @@ export default function Rightbar({ user, isProfile }) {
 
   const [friends, setFriends] = useState([]);
   const { user: currentUser, dispatch } = useContext(AuthContext);
-  const [followed, setFollowed] = useState(false);
-
+  const [followed, setFollowed] = useState(
+    currentUser.following.includes(user?._id)
+  );
+  const [isLoading, setIsLoading] = useState(true);
   const nav = useNavigate();
 
   useEffect(() => {
@@ -24,14 +26,17 @@ export default function Rightbar({ user, isProfile }) {
           `${SERVER_URI}/api/users/friends/` + user._id
         );
         setFriends(friendList.data);
+        setIsLoading(false);
       } catch (err) {
         console.log(err);
         alert("Right Bar Me fasa");
       }
     };
+    setIsLoading(true);
     setFollowed(currentUser.following.includes(user?._id));
     getFriends();
   }, [user, currentUser.following]);
+
   const HomeRightBar = () => (
     <>
       <div className="birthdayContainer">
@@ -43,9 +48,18 @@ export default function Rightbar({ user, isProfile }) {
       <img className="rightbarAd" src={`${PF}ad.png`} alt="ad" />
       <h4 className="rightbarTitle">Online Friends</h4>
       <ul className="rightbarFriendList">
-        {Users.map((user) => (
-          <OnlineFriend key={user.id} user={user} />
-        ))}
+        {isLoading ? (
+          <div>
+            <Skeleton height={50} animation="wave" />
+            <Skeleton height={50} animation="wave" />
+            <Skeleton height={50} animation="wave" />
+            <Skeleton height={50} animation="wave" />
+          </div>
+        ) : (
+          friends.map((friend) => (
+            <OnlineFriend key={friend._id} friend={friend} />
+          ))
+        )}
       </ul>
     </>
   );
@@ -58,7 +72,7 @@ export default function Rightbar({ user, isProfile }) {
         });
         dispatch({ type: "UNFOLLOW", payload: user._id });
       } else {
-        await axios.put(`${SERVER_URI}/api//users/follow/` + user._id, {
+        await axios.put(`${SERVER_URI}/api/users/follow/` + user._id, {
           _id: currentUser._id,
         });
         dispatch({ type: "FOLLOW", payload: user._id });
@@ -78,7 +92,8 @@ export default function Rightbar({ user, isProfile }) {
     <>
       {user.username !== currentUser.username && (
         <button onClick={followHandler} className="rightbarFollowButton">
-          {followed ? "Unfollow" : "Follow"} {followed ? <Remove /> : <Add />}
+          {followed ? "Unfriend" : "Add Friend"}
+          {followed ? <Remove /> : <Add />}
         </button>
       )}
       {user.username === currentUser.username && (
@@ -105,26 +120,30 @@ export default function Rightbar({ user, isProfile }) {
       <h4 className="rightbarTitle">User Friends</h4>
 
       <div className="rightbarFollowings">
-        {friends.map((friend) => (
-          <Link
-            style={{ textDecoration: "none" }}
-            key={friend._id}
-            to={"/profile/" + friend.username}
-          >
-            <div className="rightbarFollowing">
-              <img
-                className="rightbarFollowingImg"
-                src={
-                  friend.profilePicture
-                    ? PF + friend.profilePicture
-                    : PF + "person/noAvatar.png"
-                }
-                alt="userImage"
-              />
-              <span className="rightbarFollowingName">{friend.username}</span>
-            </div>
-          </Link>
-        ))}
+        {isLoading ? (
+          <Skeleton variant="rectangular" width={"100%"} height={118} />
+        ) : (
+          friends.map((friend) => (
+            <Link
+              style={{ textDecoration: "none" }}
+              key={friend._id}
+              to={"/profile/" + friend.username}
+            >
+              <div className="rightbarFollowing">
+                <img
+                  className="rightbarFollowingImg"
+                  src={
+                    friend.profilePicture
+                      ? PF + friend.profilePicture
+                      : PF + "person/noAvatar.png"
+                  }
+                  alt="userImage"
+                />
+                <span className="rightbarFollowingName">{friend.username}</span>
+              </div>
+            </Link>
+          ))
+        )}
       </div>
     </>
   );
@@ -138,19 +157,25 @@ export default function Rightbar({ user, isProfile }) {
   );
 }
 
-export function OnlineFriend({ user }) {
-  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+export function OnlineFriend({ friend }) {
+  const PF = `${SERVER_URI}/Images/`;
   return (
     <li className="rightbarFriend">
       <div className="rightbarFriendImgContainer">
-        <img
-          className="rightbarFriendImg"
-          src={PF + user.profilePicture}
-          alt="friend"
-        />
+        <Link to={`/profile/` + friend.username}>
+          <img
+            className="rightbarFriendImg"
+            src={
+              friend.profilePicture
+                ? PF + friend.profilePicture
+                : PF + "person/noAvatar.png"
+            }
+            alt="friend"
+          />
+        </Link>
         <span className="rightbarOnline"></span>
       </div>
-      <span className="rightbarUsername">{user.username}</span>
+      <span className="rightbarUsername">{friend.username}</span>
     </li>
   );
 }

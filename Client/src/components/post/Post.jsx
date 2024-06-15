@@ -94,7 +94,7 @@ export function PostCenter({ postImage, postText }) {
   );
 }
 export function PostBottom({ comments, likes, likeHandler }) {
-  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const PF = `${SERVER_URI}/Images/`;
   return (
     <div className="postBottom">
       <div className="postBottomLeft">

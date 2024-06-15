@@ -15,6 +15,7 @@ import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 import getConfig from "../../config";
+import { Skeleton } from "@mui/material";
 const { SERVER_URI } = getConfig();
 export function ListItem({ Icon, name }) {
   return (
@@ -28,13 +29,16 @@ export default function Sidebar() {
   const { user } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const [visibleUsers, setVisibleUsers] = useState(5);
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const fetchAll = async () => {
       const users = await axios.get(`${SERVER_URI}/api/users/all`, {
         params: { _id: user._id },
       });
       setUsers(users.data);
+      setIsLoading(false);
     };
+    setIsLoading(true);
     fetchAll();
   }, [user._id]);
 
@@ -62,12 +66,24 @@ export default function Sidebar() {
         <hr className="sidebarHr" />
 
         <ul className="sidebarFriendList">
-          {users.slice(0, visibleUsers).map((user) => (
-            <Friend key={user._id} friend={user} />
-          ))}
+          {isLoading ? (
+            <div>
+              <Skeleton height={30} />
+              <Skeleton height={30} />
+              <Skeleton height={30} />
+            </div>
+          ) : (
+            users
+              .slice(0, visibleUsers)
+              .map((user) => <Friend key={user._id} friend={user} />)
+          )}
         </ul>
         {visibleUsers < users.length && (
-          <button onClick={() => setVisibleUsers(visibleUsers + 5)}>
+          <button
+            style={{ cursor: "pointer" }}
+            className="sidebarButton"
+            onClick={() => setVisibleUsers(visibleUsers + 5)}
+          >
             Show More
           </button>
         )}

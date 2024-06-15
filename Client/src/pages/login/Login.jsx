@@ -10,7 +10,7 @@ const { SERVER_URI } = getConfig();
 export default function Login({ isLogin }) {
   const [isLoginPage, setIsLoginPage] = useState(isLogin);
   const navigate = useNavigate();
-  const { user, isFetching, error, dispatch } = useContext(AuthContext);
+  const { isFetching, dispatch } = useContext(AuthContext);
 
   const email = useRef();
   const username = useRef();
