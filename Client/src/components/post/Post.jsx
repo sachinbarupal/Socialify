@@ -4,6 +4,8 @@ import {
   Favorite,
   FavoriteBorderOutlined,
   MoreVert,
+  ShareOutlined,
+  TextsmsOutlined,
 } from "@mui/icons-material";
 import axios from "axios";
 import { format } from "timeago.js";
@@ -11,6 +13,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import getConfig from "../../config";
+import Comments from "../comments/Comments";
 const { SERVER_URI } = getConfig();
 
 export default function Post({ Post }) {
@@ -19,8 +22,9 @@ export default function Post({ Post }) {
   const [isLiked, setIsliked] = useState(Post.likes.includes(user._id));
   const [postUser, setPostUser] = useState({});
   const { Image, description, createdAt, userId } = Post;
+  const [comments, setComments] = useState(Post.comments);
   const PF = `${SERVER_URI}/Images/`;
-
+  const [showComments, setShowComments] = useState(false);
   useEffect(() => {
     const fetchUser = async () => {
       const response = await axios.get(
@@ -51,7 +55,7 @@ export default function Post({ Post }) {
         <PostTop
           date={format(createdAt)}
           username={postUser.username}
-          userPofile={
+          userImage={
             postUser.profilePicture
               ? PF + postUser.profilePicture
               : PF + "person/noAvatar.png"
@@ -63,69 +67,87 @@ export default function Post({ Post }) {
         />
         <PostBottom
           // comments={comment}
+          setShowComments={setShowComments}
           likes={likes}
           isLiked={isLiked}
+          comments={comments}
           likeHandler={likeHandler}
         />
+        {showComments && <hr style={{ margin: "10px 0px" }} />}
+        {showComments && (
+          <Comments
+            comments={comments}
+            postId={Post._id}
+            setComments={setComments}
+          />
+        )}
       </div>
     </div>
   );
 }
 
-export function PostTop({ date, username, userPofile }) {
+export function PostTop({ date, username, userImage }) {
   const [showOptions, setShowOptions] = useState(false);
   return (
-    <div className="postTop">
+    <div className="user">
       {/* Top Left */}
-      <div className="postTopLeft">
+      <div className="userInfo">
         <Link to={`/profile/${username}`}>
-          <img className="postProfileImg" src={userPofile} alt="profilePic" />
+          <img src={userImage} className="userImage" />
         </Link>
-        <span className="postUsername">{username}</span>
-        <span className="postDate">{date}</span>
-      </div>
-
-      {/* Top  Right */}
-      <div className="postTopRight">
-        {showOptions && <Cancel sx={{ color: "red", cursor: "pointer" }} />}
-        <div
-          style={{ cursor: "pointer" }}
-          onClick={() => setShowOptions(!showOptions)}
-        >
-          <MoreVert />
+        <div className="userDetails">
+          <Link
+            style={{ textDecoration: "none", color: "inherit" }}
+            to={`/profile/${username}`}
+          >
+            <span className="userName">{username}</span>
+          </Link>
+          <span className="date">{date}</span>
         </div>
       </div>
+      <MoreVert />
     </div>
   );
 }
 export function PostCenter({ postImage, postText }) {
   return (
-    <div style={{ margin: postText ? "20px 0" : "0" }}>
-      {postText && <span className="postText">{postText}</span>}
+    <div className="postContent">
+      <p className="postText">{postText}</p>
       {postImage && <img className="postImg" src={postImage} alt="postImage" />}
     </div>
   );
 }
-export function PostBottom({ comments, isLiked, likes, likeHandler }) {
+export function PostBottom({
+  setShowComments,
+  comments,
+  isLiked,
+  likes,
+  likeHandler,
+}) {
   return (
     <div className="postBottom">
-      <div className="postBottomLeft">
+      <div className="item">
         <div onClick={likeHandler} style={{ cursor: "pointer" }}>
           {isLiked ? (
-            <Favorite
-              onclick={() => console.log("clicked")}
-              sx={{ color: "red" }}
-            />
+            <Favorite sx={{ color: "red" }} />
           ) : (
-            <FavoriteBorderOutlined onclick={() => console.log("clicked")} />
+            <FavoriteBorderOutlined />
           )}
         </div>
-
-        <span className="postLikeCounter">{likes} Likes</span>
+        <span className="postLikes">{likes} Likes</span>
       </div>
 
-      <div className="postBottomRight">
-        <span className="postCommentText">0 Comments</span>
+      <div className="item">
+        <TextsmsOutlined
+          onClick={() => setShowComments((state) => !state)}
+          sx={{ cursor: "pointer" }}
+        />
+        <span className="postComments">{comments.length} Comments</span>
+      </div>
+
+      <div className="item">
+        <ShareOutlined sx={{ cursor: "pointer" }} />
+        Share
       </div>
     </div>
   );

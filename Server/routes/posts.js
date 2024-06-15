@@ -113,4 +113,35 @@ router.get("/user/:username", async (req, res) => {
   }
 });
 
+router.put("/comment/:postId", async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    const userId = req.body._id;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ msg: "User Not Found !!" });
+
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      {
+        $push: {
+          comments: {
+            userId: req.body.userId,
+            username: user.username,
+            userImage: user.profilePicture,
+            comment: req.body.comment,
+          },
+        },
+      },
+      { new: true }
+    );
+    if (!post) return res.status(404).json({ msg: "Post Not Found !!" });
+
+    return res.status(200).json(post.comments);
+  } catch (err) {
+    console.log("Error In Fetching Timeline", err);
+    res.status(403).json({ msg: "Error Aii" });
+  }
+});
+
 module.exports = router;
