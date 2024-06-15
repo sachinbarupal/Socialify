@@ -14,6 +14,8 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
+import getConfig from "../../config";
+const { SERVER_URI } = getConfig();
 export function ListItem({ Icon, name }) {
   return (
     <li className="sidebarListItem">
@@ -28,7 +30,7 @@ export default function Sidebar() {
   const [visibleUsers, setVisibleUsers] = useState(5);
   useEffect(() => {
     const fetchAll = async () => {
-      const users = await axios.get("/users/all", {
+      const users = await axios.get(`${SERVER_URI}/api/users/all`, {
         params: { _id: user._id },
       });
       setUsers(users.data);
@@ -75,7 +77,7 @@ export default function Sidebar() {
 }
 
 export function Friend({ friend }) {
-  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const PF = `${SERVER_URI}/Images/`;
   return (
     <li className="sidebarFriend">
       <Link

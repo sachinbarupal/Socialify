@@ -5,6 +5,8 @@ import { login } from "../../API_CALLS";
 import { AuthContext } from "../../context/AuthContext";
 import { CircularProgress } from "@mui/material";
 import axios from "axios";
+import getConfig from "../../config";
+const { SERVER_URI } = getConfig();
 export default function Login({ isLogin }) {
   const [isLoginPage, setIsLoginPage] = useState(isLogin);
   const navigate = useNavigate();
@@ -35,7 +37,7 @@ export default function Login({ isLogin }) {
       };
 
       try {
-        await axios.post("/auth/register", user);
+        await axios.post(`${SERVER_URI}/api/auth/register`, user);
         setIsLoginPage(!isLoginPage);
         navigate("/login");
       } catch (err) {

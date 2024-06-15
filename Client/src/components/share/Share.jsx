@@ -9,9 +9,11 @@ import {
 import { useContext, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
-
+import getConfig from "../../config";
+const { SERVER_URI } = getConfig();
 export default function Share() {
-  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const PF = `${SERVER_URI}/Images/`;
+
   const { user } = useContext(AuthContext);
   const description = useRef();
   const [Image, setImage] = useState(null);
@@ -36,10 +38,10 @@ export default function Share() {
 
         newPost.Image = imageName;
 
-        await axios.post("/upload", data);
+        await axios.post(`${SERVER_URI}/api/upload`, data);
       }
 
-      await axios.post("/posts/create", newPost);
+      await axios.post(`${SERVER_URI}/api/posts/create`, newPost);
       window.location.reload();
     } catch (err) {
       alert("Error While Posting, Try Again After Some Time !!");

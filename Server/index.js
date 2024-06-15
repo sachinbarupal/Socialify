@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const multer = require("multer");
 const path = require("path");
+const cors = require("cors");
 
 // For storing secret variable in the env so that no one can see them
 const dotenv = require("dotenv");
@@ -25,6 +26,7 @@ app.use("/Images", express.static(path.join(__dirname, "public/Images")));
 // Middlewares
 
 // Body Parser
+app.use(cors());
 app.use(express.json());
 // for header security
 app.use(helmet());

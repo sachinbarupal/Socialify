@@ -5,6 +5,8 @@ import { format } from "timeago.js";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import getConfig from "../../config";
+const { SERVER_URI } = getConfig();
 
 export default function Post({ Post }) {
   const [likes, setLikes] = useState(Post.likes.length);
@@ -12,11 +14,13 @@ export default function Post({ Post }) {
   const [isLiked, setIsliked] = useState(Post.likes.includes(user._id));
   const [postUser, setPostUser] = useState({});
   const { Image, description, createdAt, userId } = Post;
-  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const PF = `${SERVER_URI}/Images/`;
 
   useEffect(() => {
     const fetchUser = async () => {
-      const response = await axios.get(`/users?userId=${userId}`);
+      const response = await axios.get(
+        `${SERVER_URI}/api/users?userId=${userId}`
+      );
       setPostUser(response.data);
     };
     fetchUser();
@@ -24,7 +28,9 @@ export default function Post({ Post }) {
 
   const likeHandler = async () => {
     try {
-      await axios.put(`/posts/like/${Post._id}`, { userId: user._id });
+      await axios.put(`${SERVER_URI}/api/posts/like/${Post._id}`, {
+        userId: user._id,
+      });
       isLiked ? setLikes(likes - 1) : setLikes(likes + 1);
 
       setIsliked(!isLiked);

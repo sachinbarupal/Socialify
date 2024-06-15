@@ -5,9 +5,12 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { Add, Remove } from "@mui/icons-material";
+import getConfig from "../../config";
+const { SERVER_URI } = getConfig();
 
 export default function Rightbar({ user, isProfile }) {
-  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const PF = `${SERVER_URI}/Images/`;
+
   const [friends, setFriends] = useState([]);
   const { user: currentUser, dispatch } = useContext(AuthContext);
   const [followed, setFollowed] = useState(false);
@@ -17,7 +20,9 @@ export default function Rightbar({ user, isProfile }) {
   useEffect(() => {
     const getFriends = async () => {
       try {
-        const friendList = await axios.get("/users/friends/" + user._id);
+        const friendList = await axios.get(
+          `${SERVER_URI}/api/users/friends/` + user._id
+        );
         setFriends(friendList.data);
       } catch (err) {
         console.log(err);
@@ -48,12 +53,12 @@ export default function Rightbar({ user, isProfile }) {
   const followHandler = async () => {
     try {
       if (followed) {
-        await axios.put("/users/unfollow/" + user._id, {
+        await axios.put(`${SERVER_URI}/api/users/unfollow/` + user._id, {
           _id: currentUser._id,
         });
         dispatch({ type: "UNFOLLOW", payload: user._id });
       } else {
-        await axios.put("/users/follow/" + user._id, {
+        await axios.put(`${SERVER_URI}/api//users/follow/` + user._id, {
           _id: currentUser._id,
         });
         dispatch({ type: "FOLLOW", payload: user._id });

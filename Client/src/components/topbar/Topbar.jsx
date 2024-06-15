@@ -3,10 +3,12 @@ import { Search, Person, Chat, Notifications } from "@mui/icons-material";
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-
+import getConfig from "../../config";
+const { SERVER_URI } = getConfig();
 export default function Topbar() {
   const { user } = useContext(AuthContext);
-  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const PF = `${SERVER_URI}/Images/`;
+
   return (
     // NAV BAR
     <div className="topbarContainer">
