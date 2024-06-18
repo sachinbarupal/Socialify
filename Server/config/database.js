@@ -1,10 +1,6 @@
 // For connecting to MongoDb
 const mongoose = require("mongoose");
 
-//For using env variables
-const dotenv = require("dotenv");
-dotenv.config();
-
 const connectToDB = () => {
   mongoose
     .connect(process.env.MONGO_URL)

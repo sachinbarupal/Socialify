@@ -6,7 +6,7 @@ const path = require("path");
 const cors = require("cors");
 
 // For storing secret variable in the env so that no one can see them
-const dotenv = require("dotenv");
+require("dotenv").config();
 
 // For security purpose for the request headers
 const helmet = require("helmet");
@@ -14,19 +14,16 @@ const helmet = require("helmet");
 // For keeping track of requests, response time etc.
 const morgan = require("morgan");
 
-// Use dotenv
-dotenv.config();
-
 // Connect to Database
 const connectToDB = require("./config/database");
 connectToDB();
 
+app.use(cors());
 app.use("/Images", express.static(path.join(__dirname, "public/Images")));
 
 // Middlewares
 
 // Body Parser
-app.use(cors());
 app.use(express.json());
 // for header security
 app.use(helmet());
