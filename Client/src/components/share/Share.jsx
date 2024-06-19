@@ -6,33 +6,30 @@ import {
   PermMedia,
   Room,
 } from "@mui/icons-material";
-import { useContext, useRef, useState } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { memo, useRef, useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import getConfig from "../../config";
 const { SERVER_URI } = getConfig();
-export default function Share() {
-  const PF = `${SERVER_URI}/Images/`;
 
-  const { user } = useContext(AuthContext);
+const Share = memo(() => {
+  const PF = `${SERVER_URI}/Images/`;
+  const { user, token } = useAuth();
   const description = useRef();
   const [Image, setImage] = useState(null);
 
-  const imageUploadHandler = (e) => {
-    setImage(e.target.files[0]);
-  };
+  const { username, profilePicture } = user;
 
   const submitHandler = async (e) => {
     try {
       e.preventDefault();
+
       if (!Image && description.current.value === "") {
-        alert("Kuch to likho ya Image upload kro");
+        alert("Put some Caption or Select an Image atleast !!");
         return;
       }
-      const newPost = {
-        userId: user._id,
-        description: description.current.value,
-      };
+
+      const newPost = { description: description.current.value };
 
       if (Image) {
         const data = new FormData();
@@ -45,10 +42,14 @@ export default function Share() {
         await axios.post(`${SERVER_URI}/api/upload`, data);
       }
 
-      await axios.post(`${SERVER_URI}/api/posts/create`, newPost);
+      await axios.post(`${SERVER_URI}/api/posts/create`, newPost, {
+        headers: { Authorization: token },
+      });
+
       window.location.reload();
     } catch (err) {
       alert("Error While Posting, Try Again After Some Time !!");
+      console.log("Error in Posting", err);
     }
   };
 
@@ -58,28 +59,35 @@ export default function Share() {
         <div className="shareTop">
           <img
             src={
-              user.profilePicture
-                ? PF + user.profilePicture
-                : PF + "person/noAvatar.png"
+              profilePicture ? PF + profilePicture : PF + "person/noAvatar.png"
             }
             className="shareProfileImg"
-            alt="profilePic"
+            alt="profile"
+            loading="lazy"
           />
           <input
-            placeholder={`What's In Your Mind, ${user.username}?`}
+            placeholder={`What's In Your Mind, ${username}?`}
             className="shareInput"
             ref={description}
           />
         </div>
+
         <hr className="shareHr" />
+
         {Image && (
           <div className="shareImageContainer">
+            <div className="shareCancel">
+              <Cancel
+                style={{ cursor: "pointer" }}
+                onClick={() => setImage(null)}
+              />
+            </div>
             <img
               className="shareImage"
               src={URL.createObjectURL(Image)}
               alt="upload"
+              loading="lazy"
             />
-            <Cancel className="shareCancel" onClick={() => setImage(null)} />
           </div>
         )}
 
@@ -92,7 +100,7 @@ export default function Share() {
                 type="file"
                 id="imageUpload"
                 accept=".png, .jpeg, .jpg"
-                onChange={imageUploadHandler}
+                onChange={(e) => setImage(e.target.files[0])}
                 style={{ display: "none" }}
               />
             </label>
@@ -116,4 +124,6 @@ export default function Share() {
       </div>
     </div>
   );
-}
+});
+
+export default Share;

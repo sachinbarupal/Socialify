@@ -1,34 +1,37 @@
 import "./comments.css";
 import getConfig from "../../config";
-import { useContext, useRef } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { memo, useRef } from "react";
+import { useAuth } from "../../context/AuthContext";
 import { format } from "timeago.js";
 import axios from "axios";
 const { SERVER_URI } = getConfig();
+const PF = `${SERVER_URI}/Images/`;
 
-function Comments({ comments, setComments, postId }) {
-  const PF = `${SERVER_URI}/Images/`;
-
-  const { user } = useContext(AuthContext);
+const Comments = memo(({ comments, setComments, postId }) => {
+  const { user, token } = useAuth();
   const comment = useRef();
+
   const handleComment = async () => {
     try {
       if (comment.current.value === "") {
         alert("kuch comment to likh");
         return;
       }
-      const res = await axios.put(`${SERVER_URI}/api/posts/comment/` + postId, {
-        _id: user._id,
-        comment: comment.current.value,
-      });
+      const res = await axios.put(
+        `${SERVER_URI}/api/posts/comment/` + postId,
+        {
+          comment: comment.current.value,
+        },
+        { headers: { Authorization: token } }
+      );
 
       comment.current.value = "";
       setComments(res.data);
     } catch (err) {
-      alert("Comment krte fasa");
-      console.log(err);
+      console.log("Error in Commenting ", err);
     }
   };
+
   return (
     <div className="comments">
       <div className="commentInputContainer">
@@ -44,23 +47,31 @@ function Comments({ comments, setComments, postId }) {
         </button>
       </div>
       {comments.map((comment) => (
-        <div className="comment">
-          <img
-            className="commentUserImage"
-            src={PF + comment.userImage}
-            alt=""
-          />
-          <div className="info">
-            <span className="username">{comment.username}</span>
-            <p className="commentText">{comment.comment}</p>
-          </div>
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <span className="date">{format(comment.createdAt)}</span>
-          </div>
-        </div>
+        <Comment key={comment._id} comment={comment} />
       ))}
     </div>
   );
-}
+});
 
 export default Comments;
+
+const Comment = ({ comment }) => {
+  const { username, userImage, createdAt } = comment;
+  return (
+    <div className="comment">
+      <img
+        className="commentUserImage"
+        src={userImage ? PF + userImage : PF + "person/noAvatar.png"}
+        alt="profile"
+        loading="lazy"
+      />
+      <div className="info">
+        <span className="username">{username}</span>
+        <p className="commentText">{comment.comment}</p>
+      </div>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <span className="date">{format(createdAt)}</span>
+      </div>
+    </div>
+  );
+};

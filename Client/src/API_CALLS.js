@@ -1,17 +1,16 @@
 import axios from "axios";
 import getConfig from "./config";
 const { SERVER_URI } = getConfig();
-export const login = async (userCredentials, dispatch) => {
-  // console.log(userCredentials);
-  dispatch({ type: "LOGIN_START" });
+export const loginCall = async (userCredentials, login) => {
   try {
+    console.log(userCredentials);
     const res = await axios.post(
       `${SERVER_URI}/api/auth/login`,
       userCredentials
     );
-    dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+    login(res.data);
   } catch (err) {
-    // console.log(err);
-    dispatch({ type: "LOGIN_FAILURE", payload: err });
+    alert(err.response.data.msg);
+    console.log("Error in Login Call", err);
   }
 };

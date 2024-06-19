@@ -1,28 +1,22 @@
 import "./topbar.css";
 import { Search, Person, Chat, Notifications } from "@mui/icons-material";
-import { useContext } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
+import { memo } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import getConfig from "../../config";
 const { SERVER_URI } = getConfig();
-export default function Topbar() {
-  const { user } = useContext(AuthContext);
-  const PF = `${SERVER_URI}/Images/`;
-  const location = useLocation();
+const Topbar = memo(function () {
+  const { user } = useAuth();
 
-  const handleClick = (e) => {
-    if (location.pathname === "/") {
-      e.preventDefault(); // Prevent the default link behavior
-      window.location.reload(); // Reload the page
-    }
-  };
+  const PF = `${SERVER_URI}/Images/`;
+
   return (
     // NAV BAR
     <div className="topbarContainer">
       {/*LEFT  */}
       <div className="topbarLeft">
         {/* LOGO */}
-        <Link to="/" onClick={handleClick} style={{ textDecoration: "none" }}>
+        <Link to="/" style={{ textDecoration: "none" }}>
           <span className="logo">Socialify</span>
         </Link>
       </div>
@@ -40,8 +34,8 @@ export default function Topbar() {
       <div className="topbarRight">
         {/* LINKS */}
         <div className="topBarLinks">
-          <span className="topBarLink">HomePage</span>
-          <span className="topBarLink">TimeLine</span>
+          <span className="topBarLink">Home</span>
+          <span className="topBarLink">Timeline</span>
         </div>
 
         {/* ICONS */}
@@ -64,7 +58,7 @@ export default function Topbar() {
         </div>
 
         {/* PROFILE PIC */}
-        <Link to={`/profile/${user?.username}`}>
+        <Link to={`/profile/${user.username}`}>
           <img
             src={
               user?.profilePicture
@@ -72,10 +66,13 @@ export default function Topbar() {
                 : PF + "person/noAvatar.png"
             }
             alt="profile"
+            loading="lazy"
             className="topBarImg"
           />
         </Link>
       </div>
     </div>
   );
-}
+});
+
+export default Topbar;

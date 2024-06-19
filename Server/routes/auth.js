@@ -57,12 +57,12 @@ router.post("/login", async (req, res) => {
       return res.status(403).json({ msg: "Invalid Inputs !!" });
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ msg: "User Not Found!!" });
+    if (!user) return res.status(403).json({ msg: "User Not Found!!" });
 
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword)
-      return res.status(404).json({ msg: "Wrong Password !!" });
+      return res.status(403).json({ msg: "Wrong Password !!" });
 
     const token = jwt.sign({ email }, process.env.JWT_SECRET);
 

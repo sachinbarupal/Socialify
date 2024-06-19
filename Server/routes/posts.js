@@ -199,7 +199,7 @@ router.put("/comment/:postId", async (req, res) => {
     );
     if (!post) return res.status(404).json({ msg: "Post Not Found !!" });
 
-    return res.status(200).json({ msg: "Comment Added Successfully !!" });
+    return res.status(200).json(post.comments);
   } catch (err) {
     console.log("Error In Commenting ", err);
     res.status(403).json({ msg: "Error in Commenting" });

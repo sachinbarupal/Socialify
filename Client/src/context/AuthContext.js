@@ -1,34 +1,62 @@
-import { createContext, useEffect, useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 import AuthReducer from "./AuthReducer";
-const userFromLocalStorage = localStorage.getItem("user");
+
 const INITIAL_STATE = {
-  user:
-    userFromLocalStorage && userFromLocalStorage !== "undefined"
-      ? JSON.parse(userFromLocalStorage)
-      : null,
-  isFetching: false,
-  error: false,
+  user: null,
+  token: null,
 };
 
-export const AuthContext = createContext(INITIAL_STATE);
+const LOGIN = "LOGIN";
+const LOGOUT = "LOGOUT";
+const FOLLOW = "FOLLOW";
+
+const AuthContext = createContext(INITIAL_STATE);
 
 export const AuthContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
+  const [state, dispatch] = useReducer(
+    AuthReducer,
+    INITIAL_STATE,
+    (initial) => {
+      const storedState = localStorage.getItem("state");
+
+      if (storedState) {
+        const parsedState = JSON.parse(storedState);
+        return {
+          user: parsedState.user || null,
+          token: parsedState.token || null,
+        };
+      }
+      return initial;
+    }
+  );
 
   useEffect(() => {
-    localStorage.setItem("user", JSON.stringify(state.user));
-  }, [state.user]);
+    localStorage.setItem(
+      "state",
+      JSON.stringify({
+        user: state.user,
+        token: state.token,
+      })
+    );
+  }, [state.user, state.token]);
+
+  const login = (userToken) => {
+    dispatch({ type: LOGIN, payload: userToken });
+  };
+
+  const logout = () => {
+    dispatch({ type: LOGOUT });
+  };
+
+  const followUser = (userId) => {
+    dispatch({ type: FOLLOW, payload: userId });
+  };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user: state.user,
-        isFetching: state.isFetching,
-        error: state.error,
-        dispatch,
-      }}
-    >
+    <AuthContext.Provider value={{ ...state, login, logout, followUser }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => useContext(AuthContext);

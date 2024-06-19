@@ -1,29 +1,33 @@
 import "./login.css";
-import { useContext, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../API_CALLS";
-import { AuthContext } from "../../context/AuthContext";
+import { loginCall } from "../../API_CALLS";
+import { useAuth } from "../../context/AuthContext";
 import { CircularProgress } from "@mui/material";
 import axios from "axios";
 import getConfig from "../../config";
 const { SERVER_URI } = getConfig();
+
 export default function Login({ isLogin }) {
   const [isLoginPage, setIsLoginPage] = useState(isLogin);
   const navigate = useNavigate();
-  const { isFetching, dispatch } = useContext(AuthContext);
+
+  const { login } = useAuth();
 
   const email = useRef();
   const username = useRef();
   const password = useRef();
   const confPassword = useRef();
+  const isFetching = false;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isLoginPage) {
-      login(
-        { email: email.current.value, password: password.current.value },
-        dispatch
-      );
+      const credentials = {
+        email: email.current.value,
+        password: password.current.value,
+      };
+      loginCall(credentials, login);
     } else {
       if (confPassword.current.value !== password.current.value)
         return confPassword.current.setCustomValidity(
@@ -41,12 +45,11 @@ export default function Login({ isLogin }) {
         setIsLoginPage(!isLoginPage);
         navigate("/login");
       } catch (err) {
-        // console.log(err);
+        console.log("Error in Login", err);
       }
     }
   };
 
-  // console.log(user);
   return (
     <div className="login">
       <div className="loginWrapper">

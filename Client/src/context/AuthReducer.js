@@ -1,24 +1,32 @@
+const LOGIN = "LOGIN";
+const LOGOUT = "LOGOUT";
+const FOLLOW = "FOLLOW";
+
 const AuthReducer = (state, action) => {
   switch (action.type) {
-    case "LOGIN_START":
+    case LOGIN:
+      return {
+        ...state,
+        user: action.payload.user,
+        token: action.payload.token,
+      };
+    case LOGOUT:
+      localStorage.removeItem("state");
       return {
         user: null,
-        isFetching: true,
-        error: false,
+        token: null,
       };
-    case "LOGIN_SUCCESS":
-      return {
-        user: action.payload,
-        isFetching: false,
-        error: false,
-      };
-    case "LOGIN_FAILURE":
-      return {
-        user: null,
-        isFetching: false,
-        error: action.payload,
-      };
-    case "FOLLOW":
+    case FOLLOW:
+      if (state.user.following.includes(action.payload))
+        return {
+          ...state,
+          user: {
+            ...state.user,
+            following: state.user.following.filter(
+              (id) => id !== action.payload
+            ),
+          },
+        };
       return {
         ...state,
         user: {
@@ -26,21 +34,7 @@ const AuthReducer = (state, action) => {
           following: [...state.user.following, action.payload],
         },
       };
-    case "UNFOLLOW":
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          following: state.user.following.filter((id) => id !== action.payload),
-        },
-      };
-    case "LOGOUT":
-      localStorage.removeItem("user");
-      return {
-        user: null, // Set the user property to null in your state
-        isFetching: false,
-        error: false,
-      };
+
     default:
       return state;
   }

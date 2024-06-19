@@ -10,37 +10,42 @@ import {
   Event,
   School,
 } from "@mui/icons-material";
-import { useContext, useEffect, useState } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext, useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 import getConfig from "../../config";
 import { Skeleton } from "@mui/material";
 const { SERVER_URI } = getConfig();
-export function ListItem({ Icon, name }) {
+
+const ListItem = memo(function ({ Icon, name }) {
   return (
     <li className="sidebarListItem">
       <Icon className="sidebarIcon" />
       <span className="sidebarListItemText">{name}</span>
     </li>
   );
-}
-export default function Sidebar() {
-  const { user } = useContext(AuthContext);
+});
+
+const Sidebar = memo(() => {
+  const { token } = useAuth();
   const [users, setUsers] = useState([]);
   const [visibleUsers, setVisibleUsers] = useState(5);
   const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const fetchAll = async () => {
       const users = await axios.get(`${SERVER_URI}/api/users/all`, {
-        params: { _id: user._id },
+        headers: {
+          Authorization: token,
+        },
       });
       setUsers(users.data);
       setIsLoading(false);
     };
     setIsLoading(true);
     fetchAll();
-  }, [user._id]);
+  }, [token]);
 
   const icons = [
     { Icon: RssFeed, name: "Feed" },
@@ -53,18 +58,18 @@ export default function Sidebar() {
     { Icon: Event, name: "Events" },
     { Icon: School, name: "Courses" },
   ];
+
   return (
     <div className="sidebar">
       <div className="sidebarWrapper">
         <ul className="sidebarList">
-          {icons.map((Icon, index) => (
-            <ListItem key={index} Icon={Icon.Icon} name={Icon.name} />
+          {icons.map(({ Icon, name }, index) => (
+            <ListItem key={index} Icon={Icon} name={name} />
           ))}
         </ul>
 
         <button className="sidebarButton">Show More</button>
         <hr className="sidebarHr" />
-
         <ul className="sidebarFriendList">
           {isLoading ? (
             <div>
@@ -90,28 +95,26 @@ export default function Sidebar() {
       </div>
     </div>
   );
-}
+});
 
-export function Friend({ friend }) {
+export default Sidebar;
+
+const Friend = memo(({ friend }) => {
   const PF = `${SERVER_URI}/Images/`;
+  const { profilePicture, username } = friend;
   return (
     <li className="sidebarFriend">
-      <Link
-        style={{ textDecoration: "none" }}
-        to={"/profile/" + friend.username}
-      >
+      <Link style={{ textDecoration: "none" }} to={"/profile/" + username}>
         <img
           className="sidebarFriendImg"
           loading="lazy"
           src={
-            friend.profilePicture
-              ? PF + friend.profilePicture
-              : PF + "person/noAvatar.png"
+            profilePicture ? PF + profilePicture : PF + "person/noAvatar.png"
           }
-          alt="friendProfilePic"
+          alt="friend"
         />
       </Link>
-      <span className="sidebarFriendName">{friend.username}</span>
+      <span className="sidebarFriendName">{username}</span>
     </li>
   );
-}
+});

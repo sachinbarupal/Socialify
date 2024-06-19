@@ -18,16 +18,16 @@ router.put("/update", async (req, res) => {
       city,
       relationship,
     } = req.body;
-
+    let hashedPassword = null;
     if (password) {
       const salt = await bcrypt.genSalt(10);
-      password = await bcrypt.hash(password, salt);
+      hashedPassword = await bcrypt.hash(password, salt);
     }
 
     await User.findOneAndUpdate(
       { email },
       {
-        password,
+        password: hashedPassword,
         description,
         profilePicture,
         coverPicture,
@@ -56,11 +56,20 @@ router.delete("/delete", async (req, res) => {
 });
 
 // Get User
-router.get("/user/:username", async (req, res) => {
+router.get("/user/:_id_or_username", async (req, res) => {
   try {
-    const username = req.params.username;
+    const _id_or_username = req.params._id_or_username;
 
-    const user = await User.findOne({ username });
+    if (!mongoose.Types.ObjectId.isValid(_id_or_username)) {
+      const user = await User.findOne({ username: _id_or_username });
+      if (!user) return res.status(404).json({ msg: "User Not Found !!" });
+
+      const { password, email, __v, updatedAt, createdAt, ...other } =
+        user._doc;
+      return res.status(200).json(other);
+    }
+
+    const user = await User.findOne({ _id: _id_or_username });
     if (!user) return res.status(404).json({ msg: "User Not Found !!" });
 
     const { password, email, __v, updatedAt, createdAt, ...other } = user._doc;
@@ -132,7 +141,7 @@ router.put("/follow/:_id", async (req, res) => {
       await nextUser.updateOne({ $pull: { followers: user._id } });
 
       return res
-        .status(403)
+        .status(200)
         .json({ msg: "User has been unfollowed successfully !!" });
     }
 

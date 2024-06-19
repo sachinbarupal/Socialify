@@ -9,45 +9,33 @@ import {
 } from "@mui/icons-material";
 import axios from "axios";
 import { format } from "timeago.js";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import getConfig from "../../config";
 import Comments from "../comments/Comments";
 const { SERVER_URI } = getConfig();
 
-export default function Post({ Post }) {
-  const [likes, setLikes] = useState(Post.likes.length);
-  const { user } = useContext(AuthContext);
-  const [isLiked, setIsliked] = useState(Post.likes.includes(user._id));
-  const [postUser, setPostUser] = useState({});
-  const { Image, description, createdAt, userId } = Post;
-  const [comments, setComments] = useState(Post.comments);
+export default function Post({ post }) {
   const PF = `${SERVER_URI}/Images/`;
-  const [showComments, setShowComments] = useState(false);
+  const { user, token } = useAuth();
+
+  const [postUser, setPostUser] = useState({});
+
+  const { _id, Image, description, createdAt, userId } = post;
+
   useEffect(() => {
     const fetchUser = async () => {
       const response = await axios.get(
-        `${SERVER_URI}/api/users?userId=${userId}`
+        `${SERVER_URI}/api/users/user/${userId}`,
+        {
+          headers: { Authorization: token },
+        }
       );
       setPostUser(response.data);
     };
     fetchUser();
   }, [userId]);
-
-  const likeHandler = async () => {
-    try {
-      await axios.put(`${SERVER_URI}/api/posts/like/${Post._id}`, {
-        userId: user._id,
-      });
-      isLiked ? setLikes(likes - 1) : setLikes(likes + 1);
-
-      setIsliked(!isLiked);
-    } catch (err) {
-      alert("Post me fasa");
-      console.log(err);
-    }
-  };
 
   return (
     <div className="post">
@@ -62,38 +50,29 @@ export default function Post({ Post }) {
           }
         />
         <PostCenter
-          postImage={Image ? PF + Image : null}
+          postImage={Image ? PF + Image : false}
           postText={description}
         />
-        <PostBottom
-          // comments={comment}
-          setShowComments={setShowComments}
-          likes={likes}
-          isLiked={isLiked}
-          comments={comments}
-          likeHandler={likeHandler}
-        />
-        {showComments && <hr style={{ margin: "10px 0px" }} />}
-        {showComments && (
-          <Comments
-            comments={comments}
-            postId={Post._id}
-            setComments={setComments}
-          />
-        )}
+
+        <PostBottom post={post} />
       </div>
     </div>
   );
 }
 
-export function PostTop({ date, username, userImage }) {
+function PostTop({ date, username, userImage }) {
   const [showOptions, setShowOptions] = useState(false);
   return (
     <div className="user">
       {/* Top Left */}
       <div className="userInfo">
         <Link to={`/profile/${username}`}>
-          <img src={userImage} className="userImage" />
+          <img
+            src={userImage}
+            loading="lazy"
+            alt="profile"
+            className="userImage"
+          />
         </Link>
         <div className="userDetails">
           <Link
@@ -109,46 +88,75 @@ export function PostTop({ date, username, userImage }) {
     </div>
   );
 }
-export function PostCenter({ postImage, postText }) {
+function PostCenter({ postImage, postText }) {
   return (
     <div className="postContent">
       <p className="postText">{postText}</p>
-      {postImage && <img className="postImg" src={postImage} alt="postImage" />}
+      {postImage && (
+        <img loading="lazy" className="postImg" src={postImage} alt="img" />
+      )}
     </div>
   );
 }
-export function PostBottom({
-  setShowComments,
-  comments,
-  isLiked,
-  likes,
-  likeHandler,
-}) {
+function PostBottom({ post }) {
+  const { user, token } = useAuth();
+  const [likes, setLikes] = useState(post.likes.length);
+  const [isLiked, setIsliked] = useState(post.likes.includes(user._id));
+  const [comments, setComments] = useState(post.comments);
+  const [showComments, setShowComments] = useState(false);
+
+  const likeHandler = async () => {
+    try {
+      await axios.put(
+        `${SERVER_URI}/api/posts/like/${post._id}`,
+        {},
+        {
+          headers: { Authorization: token },
+        }
+      );
+      isLiked ? setLikes(likes - 1) : setLikes(likes + 1);
+
+      setIsliked(!isLiked);
+    } catch (err) {
+      console.log("Error in Like", err);
+    }
+  };
+
   return (
-    <div className="postBottom">
-      <div className="item">
-        <div onClick={likeHandler} style={{ cursor: "pointer" }}>
-          {isLiked ? (
-            <Favorite sx={{ color: "red" }} />
-          ) : (
-            <FavoriteBorderOutlined />
-          )}
+    <>
+      <div className="postBottom">
+        <div className="item">
+          <div onClick={likeHandler} style={{ cursor: "pointer" }}>
+            {isLiked ? (
+              <Favorite sx={{ color: "red" }} />
+            ) : (
+              <FavoriteBorderOutlined />
+            )}
+          </div>
+          <span className="postLikes">{likes} Likes</span>
         </div>
-        <span className="postLikes">{likes} Likes</span>
-      </div>
 
-      <div className="item">
-        <TextsmsOutlined
-          onClick={() => setShowComments((state) => !state)}
-          sx={{ cursor: "pointer" }}
+        <div className="item">
+          <TextsmsOutlined
+            onClick={() => setShowComments((state) => !state)}
+            sx={{ cursor: "pointer" }}
+          />
+          <span className="postComments">{comments.length} Comments</span>
+        </div>
+
+        <div className="item">
+          <ShareOutlined sx={{ cursor: "pointer" }} />
+          Share
+        </div>
+      </div>
+      {showComments && <hr style={{ margin: "10px 0px" }} />}
+      {showComments && (
+        <Comments
+          comments={comments}
+          postId={post._id}
+          setComments={setComments}
         />
-        <span className="postComments">{comments.length} Comments</span>
-      </div>
-
-      <div className="item">
-        <ShareOutlined sx={{ cursor: "pointer" }} />
-        Share
-      </div>
-    </div>
+      )}
+    </>
   );
 }

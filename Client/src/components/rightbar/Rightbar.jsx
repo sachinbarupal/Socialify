@@ -1,21 +1,22 @@
 import "./rightbar.css";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { Add, Remove } from "@mui/icons-material";
 import getConfig from "../../config";
 import { Skeleton } from "@mui/material";
 const { SERVER_URI } = getConfig();
+const PF = `${SERVER_URI}/Images/`;
 
 export default function Rightbar({ user, isProfile }) {
-  const PF = `${SERVER_URI}/Images/`;
+  const { user: currentUser, token } = useAuth();
 
   const [friends, setFriends] = useState([]);
-  const { user: currentUser, dispatch } = useContext(AuthContext);
   const [followed, setFollowed] = useState(
     currentUser.following.includes(user?._id)
   );
+
   const [isLoading, setIsLoading] = useState(true);
   const nav = useNavigate();
 
@@ -23,7 +24,8 @@ export default function Rightbar({ user, isProfile }) {
     const getFriends = async () => {
       try {
         const friendList = await axios.get(
-          `${SERVER_URI}/api/users/friends/` + user._id
+          `${SERVER_URI}/api/users/friends/` + user.username,
+          { headers: { Authorization: token } }
         );
         setFriends(friendList.data);
         setIsLoading(false);

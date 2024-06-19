@@ -46,8 +46,8 @@ app.post("/api/upload", upload.single("Image"), (req, res) => {
   try {
     res.status(200).json("File Uploaded Successfully");
   } catch (err) {
-    console.log("err in upload");
-    res.status(403).json("Error Aari");
+    console.log("Error in Uploading Image");
+    res.status(403).json("Error in Uploading Image");
   }
 });
 
@@ -55,6 +55,7 @@ app.post("/api/upload", upload.single("Image"), (req, res) => {
 const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
 const postRoutes = require("./routes/posts");
+const userAuth = require("./middlewares/userAuth");
 
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
