@@ -4,8 +4,10 @@ const userAuth = require("../middlewares/userAuth");
 const Post = require("../models/Post");
 const User = require("../models/User");
 
+router.use(userAuth);
+
 // Create Post
-router.post("/create", userAuth, async (req, res) => {
+router.post("/create", async (req, res) => {
   try {
     const email = req.email;
 
@@ -30,7 +32,7 @@ router.post("/create", userAuth, async (req, res) => {
 });
 
 // Update Post
-router.put("/update/:postId", userAuth, async (req, res) => {
+router.put("/update/:postId", async (req, res) => {
   try {
     const email = req.email;
     const postId = req.params.postId;
@@ -61,7 +63,7 @@ router.put("/update/:postId", userAuth, async (req, res) => {
 });
 
 // Delete Post
-router.delete("/delete/:postId", userAuth, async (req, res) => {
+router.delete("/delete/:postId", async (req, res) => {
   try {
     const email = req.email;
     const postId = req.params.postId;
@@ -86,7 +88,7 @@ router.delete("/delete/:postId", userAuth, async (req, res) => {
 });
 
 // likeDislike post
-router.put("/like/:postId", userAuth, async (req, res) => {
+router.put("/like/:postId", async (req, res) => {
   try {
     const email = req.email;
     const postId = req.params.postId;
@@ -113,7 +115,7 @@ router.put("/like/:postId", userAuth, async (req, res) => {
 });
 
 // Get Post
-router.get("/post/:postId", userAuth, async (req, res) => {
+router.get("/post/:postId", async (req, res) => {
   try {
     const postId = req.params.postId;
 
@@ -133,7 +135,7 @@ router.get("/post/:postId", userAuth, async (req, res) => {
 });
 
 // Get Timeline Posts
-router.get("/timeline", userAuth, async (req, res) => {
+router.get("/timeline", async (req, res) => {
   try {
     const email = req.email;
     const user = await User.findOne({ email });
@@ -154,7 +156,7 @@ router.get("/timeline", userAuth, async (req, res) => {
 });
 
 // Get Users Posts
-router.get("/user/:username", userAuth, async (req, res) => {
+router.get("/user/:username", async (req, res) => {
   try {
     const username = req.params.username;
     const { _id: userId } = await User.findOne({ username });
@@ -172,7 +174,7 @@ router.get("/user/:username", userAuth, async (req, res) => {
 });
 
 // Add Comment
-router.put("/comment/:postId", userAuth, async (req, res) => {
+router.put("/comment/:postId", async (req, res) => {
   try {
     const email = req.email;
     const postId = req.params.postId;

@@ -24,7 +24,9 @@ router.post("/register", async (req, res) => {
       return res.status(403).json({ msg: "Invalid Inputs !!" });
 
     // Check if already registered
-    const user = await User.findOne({ email });
+    const user = await User.findOne({
+      $or: [{ username }, { email }],
+    });
     if (user) return res.status(403).json({ msg: "User Already Exists !!" });
 
     // Hash password
@@ -64,7 +66,16 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign({ email }, process.env.JWT_SECRET);
 
-    res.status(200).json({ user, token });
+    const {
+      password: p,
+      email: e,
+      __v,
+      updatedAt,
+      createdAt,
+      ...other
+    } = user._doc;
+
+    res.status(200).json({ user: other, token });
   } catch (err) {
     console.log("Error in Login", err);
     res.status(403).json({ msg: "Error in Login" });
