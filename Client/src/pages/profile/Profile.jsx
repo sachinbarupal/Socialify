@@ -33,9 +33,19 @@ export default function Profile() {
 
   if (isLoading)
     return (
-      <div style={{ height: "100vh" }}>
+      <div>
         <Topbar />
-        <CircularProgress />
+        <div
+          className="profileContainer"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <CircularProgress sx={{ color: "blue" }} />
+        </div>
       </div>
     );
 
