@@ -21,10 +21,10 @@ function App() {
     //   path: "/messenger",
     //   element: token ? <Messenger /> : <Navigate to="/login" />,
     // },
-    // {
-    //   path: "/register",
-    //   element: <Login isLogin={false} />,
-    // },
+    {
+      path: "/register",
+      element: token ? <Navigate to="/" /> : <Login isLogin={false} />,
+    },
     {
       path: "/profile/:username",
       element: token ? <Profile /> : <Navigate to="/login" />,

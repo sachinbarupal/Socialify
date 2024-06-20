@@ -51,7 +51,7 @@ const HomeRightBar = () => {
 
         <img
           className="rightbarAd"
-          src={`${PF}ad.png`}
+          src={`${PF}meme.gif`}
           alt="ad"
           loading="lazy"
         />

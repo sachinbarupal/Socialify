@@ -17,6 +17,14 @@ const Topbar = memo(function () {
       <div className="topbarLeft">
         {/* LOGO */}
         <Link to="/" style={{ textDecoration: "none" }}>
+          <img
+            className="logoImg"
+            loading="lazy"
+            src={PF + "logoT.png"}
+            alt="logo"
+          />
+        </Link>
+        <Link to="/" style={{ textDecoration: "none" }}>
           <span className="logo">Socialify</span>
         </Link>
       </div>

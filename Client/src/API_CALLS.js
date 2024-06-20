@@ -1,6 +1,7 @@
 import axios from "axios";
 import getConfig from "./config";
 const { SERVER_URI } = getConfig();
+
 export const loginCall = async (userCredentials, login) => {
   try {
     console.log(userCredentials);

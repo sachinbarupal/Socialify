@@ -9,6 +9,7 @@ const INITIAL_STATE = {
 const LOGIN = "LOGIN";
 const LOGOUT = "LOGOUT";
 const FOLLOW = "FOLLOW";
+const UPDATE_PROFILE = "UPDATE_PROFILE";
 
 const AuthContext = createContext(INITIAL_STATE);
 
@@ -52,8 +53,14 @@ export const AuthContextProvider = ({ children }) => {
     dispatch({ type: FOLLOW, payload: userId });
   };
 
+  const updateUser = (user) => {
+    dispatch({ type: UPDATE_PROFILE, payload: user });
+  };
+
   return (
-    <AuthContext.Provider value={{ ...state, login, logout, followUser }}>
+    <AuthContext.Provider
+      value={{ ...state, login, logout, followUser, updateUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

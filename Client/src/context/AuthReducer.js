@@ -1,6 +1,7 @@
 const LOGIN = "LOGIN";
 const LOGOUT = "LOGOUT";
 const FOLLOW = "FOLLOW";
+const UPDATE_PROFILE = "UPDATE_PROFILE";
 
 const AuthReducer = (state, action) => {
   switch (action.type) {
@@ -33,6 +34,12 @@ const AuthReducer = (state, action) => {
           ...state.user,
           following: [...state.user.following, action.payload],
         },
+      };
+
+    case UPDATE_PROFILE:
+      return {
+        ...state,
+        user: { ...state.user, ...action.payload },
       };
 
     default:

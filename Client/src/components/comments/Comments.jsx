@@ -26,7 +26,7 @@ const Comments = memo(({ comments, setComments, postId }) => {
       );
 
       comment.current.value = "";
-      setComments(res.data);
+      setComments([res.data, ...comments]);
     } catch (err) {
       console.log("Error in Commenting ", err);
     }
@@ -35,7 +35,14 @@ const Comments = memo(({ comments, setComments, postId }) => {
   return (
     <div className="comments">
       <div className="commentInputContainer">
-        <img className="commentUserImage" src={PF + user.profilePicture} />
+        <img
+          className="commentUserImage"
+          src={
+            user.profilePicture
+              ? PF + user.profilePicture
+              : PF + "person/noAvatar.png"
+          }
+        />
         <input
           className="commentInput"
           ref={comment}

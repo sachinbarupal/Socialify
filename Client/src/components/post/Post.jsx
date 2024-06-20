@@ -18,11 +18,11 @@ const { SERVER_URI } = getConfig();
 
 export default function Post({ post }) {
   const PF = `${SERVER_URI}/Images/`;
-  const { user, token } = useAuth();
+  const { token } = useAuth();
 
   const [postUser, setPostUser] = useState({});
 
-  const { _id, Image, description, createdAt, userId } = post;
+  const { Image, description, createdAt, userId } = post;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -102,7 +102,12 @@ function PostBottom({ post }) {
   const { user, token } = useAuth();
   const [likes, setLikes] = useState(post.likes.length);
   const [isLiked, setIsliked] = useState(post.likes.includes(user._id));
-  const [comments, setComments] = useState(post.comments);
+  const [comments, setComments] = useState(
+    post.comments.sort(
+      (comment1, comment2) =>
+        new Date(comment2.createdAt) - new Date(comment1.createdAt)
+    )
+  );
   const [showComments, setShowComments] = useState(false);
 
   const likeHandler = async () => {

@@ -10,24 +10,17 @@ router.use(userAuth);
 router.put("/update", async (req, res) => {
   try {
     const email = req.email;
-    const {
-      password,
-      description,
-      profilePicture,
-      coverPicture,
-      city,
-      relationship,
-    } = req.body;
-    let hashedPassword = null;
-    if (password) {
+    const { description, profilePicture, coverPicture, city, relationship } =
+      req.body;
+    if (req.body.password) {
       const salt = await bcrypt.genSalt(10);
-      hashedPassword = await bcrypt.hash(password, salt);
+      req.body.password = await bcrypt.hash(req.body.password, salt);
     }
-
+    const password = req.body.password;
     await User.findOneAndUpdate(
       { email },
       {
-        password: hashedPassword,
+        password,
         description,
         profilePicture,
         coverPicture,

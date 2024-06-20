@@ -48,3 +48,18 @@
 .profileRightBottom {
   display: flex;
 }
+
+.cameraIcon {
+  position: absolute;
+  left: 52%;
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  /* top: 50%; */
+  /* width: fit-content; */
+  /* left: 75px; */
+  /* right: 0; */
+  /* margin-left: auto; */
+  /* margin-right: auto; */
+  /* top: 275px; */
+}

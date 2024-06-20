@@ -30,9 +30,7 @@ export default function Login({ isLogin }) {
       loginCall(credentials, login);
     } else {
       if (confPassword.current.value !== password.current.value)
-        return confPassword.current.setCustomValidity(
-          "Passwords do not match !!"
-        );
+        return alert("Passwords do not match !!");
 
       const user = {
         username: username.current.value,
@@ -45,7 +43,7 @@ export default function Login({ isLogin }) {
         setIsLoginPage(!isLoginPage);
         navigate("/login");
       } catch (err) {
-        console.log("Error in Login", err);
+        alert(err.response.data.msg);
       }
     }
   };
@@ -62,7 +60,10 @@ export default function Login({ isLogin }) {
           <form
             onSubmit={handleSubmit}
             className="loginBox"
-            style={{ height: isLoginPage ? "300px" : "400px" }}
+            style={{
+              height: isLoginPage ? "300px" : "400px",
+              gap: "10px",
+            }}
           >
             {!isLoginPage && (
               <input
@@ -83,7 +84,6 @@ export default function Login({ isLogin }) {
               ref={password}
               required
               type="password"
-              // minLength="8"
               className="loginInput"
               placeholder="Password"
             />

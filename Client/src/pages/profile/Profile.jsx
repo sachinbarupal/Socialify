@@ -10,6 +10,7 @@ import getConfig from "../../config";
 import { useAuth } from "../../context/AuthContext";
 import ProfileRightBar from "../../components/rightbar/ProfileRightBar";
 import { CircularProgress } from "@mui/material";
+import ProfilePic from "./ProfilePic";
 const { SERVER_URI } = getConfig();
 const PF = `${SERVER_URI}/Images/`;
 
@@ -18,6 +19,7 @@ export default function Profile() {
   const [user, setUser] = useState(false);
   const username = useParams().username;
   const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const fetchUser = async () => {
       const res = await axios.get(`${SERVER_URI}/api/users/user/${username}`, {
@@ -67,16 +69,8 @@ export default function Profile() {
                 alt="user"
                 loading="lazy"
               />
-              <img
-                src={
-                  profilePicture
-                    ? PF + profilePicture
-                    : PF + "person/noAvatar.png"
-                }
-                className="profileUserImg"
-                alt="cover"
-                loading="lazy"
-              />
+
+              <ProfilePic profilePicture={profilePicture} />
             </div>
             <div className="profileInfo">
               <h4 className="profileInfoName">{username}</h4>

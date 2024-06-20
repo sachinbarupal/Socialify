@@ -192,14 +192,16 @@ router.put("/comment/:postId", async (req, res) => {
       profilePicture: userImage,
     } = await User.findOne({ email });
 
+    const newComment = { userId, username, userImage, comment };
+
     const post = await Post.findByIdAndUpdate(
       postId,
-      { $push: { comments: { userId, username, userImage, comment } } },
+      { $push: { comments: newComment } },
       { new: true }
     );
     if (!post) return res.status(404).json({ msg: "Post Not Found !!" });
 
-    return res.status(200).json(post.comments);
+    return res.status(200).json(newComment);
   } catch (err) {
     console.log("Error In Commenting ", err);
     res.status(403).json({ msg: "Error in Commenting" });
