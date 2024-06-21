@@ -1,6 +1,5 @@
 import "./post.css";
 import {
-  Cancel,
   Favorite,
   FavoriteBorderOutlined,
   MoreVert,
@@ -17,7 +16,6 @@ import Comments from "../comments/Comments";
 const { SERVER_URI } = getConfig();
 
 export default function Post({ post }) {
-  const PF = `${SERVER_URI}/Images/`;
   const { token } = useAuth();
 
   const [postUser, setPostUser] = useState({});
@@ -35,7 +33,7 @@ export default function Post({ post }) {
       setPostUser(response.data);
     };
     fetchUser();
-  }, [userId]);
+  }, [userId, token]);
 
   return (
     <div className="post">
@@ -43,16 +41,9 @@ export default function Post({ post }) {
         <PostTop
           date={format(createdAt)}
           username={postUser.username}
-          userImage={
-            postUser.profilePicture
-              ? PF + postUser.profilePicture
-              : PF + "person/noAvatar.png"
-          }
+          userImage={postUser.profilePicture}
         />
-        <PostCenter
-          postImage={Image ? PF + Image : false}
-          postText={description}
-        />
+        <PostCenter postImage={Image} postText={description} />
 
         <PostBottom post={post} />
       </div>

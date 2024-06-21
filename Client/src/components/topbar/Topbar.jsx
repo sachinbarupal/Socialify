@@ -3,12 +3,8 @@ import { Search, Person, Chat, Notifications } from "@mui/icons-material";
 import { memo } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import getConfig from "../../config";
-const { SERVER_URI } = getConfig();
 const Topbar = memo(function () {
   const { user } = useAuth();
-
-  const PF = `${SERVER_URI}/Images/`;
 
   return (
     // NAV BAR
@@ -20,7 +16,7 @@ const Topbar = memo(function () {
           <img
             className="logoImg"
             loading="lazy"
-            src={PF + "logoT.png"}
+            src={"/assets/logo.png"}
             alt="logo"
           />
         </Link>
@@ -68,11 +64,7 @@ const Topbar = memo(function () {
         {/* PROFILE PIC */}
         <Link to={`/profile/${user.username}`}>
           <img
-            src={
-              user?.profilePicture
-                ? PF + user.profilePicture
-                : PF + "person/noAvatar.png"
-            }
+            src={user.profilePicture}
             alt="profile"
             loading="lazy"
             className="topBarImg"

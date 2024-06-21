@@ -6,7 +6,6 @@ import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 
 const { SERVER_URI } = getConfig();
-const PF = `${SERVER_URI}/Images/`;
 
 export default function ProfilePic({ profilePicture }) {
   const [profileImg, setProfileImg] = useState(null);
@@ -17,20 +16,21 @@ export default function ProfilePic({ profilePicture }) {
       const data = new FormData();
       const imageName = Date.now() + profileImg.name;
       data.append("name", imageName);
-      data.append("Image", profileImg);
+      data.append("folder", "Users/Profiles");
+      data.append("imageFile", profileImg);
 
-      await axios.post(`${SERVER_URI}/api/upload`, data);
+      const res = await axios.post(`${SERVER_URI}/api/upload`, data);
 
       await axios.put(
         `${SERVER_URI}/api/users/update`,
-        { profilePicture: imageName },
+        { profilePicture: res.data.image },
         {
           headers: { Authorization: token },
         }
       );
 
       setProfileImg(null);
-      updateUser({ profilePicture: imageName });
+      updateUser({ profilePicture: res.data.image });
       window.location.reload();
     } catch (err) {
       alert("Error in Image Uploading");
@@ -49,16 +49,14 @@ export default function ProfilePic({ profilePicture }) {
         />
       ) : (
         <img
-          src={
-            profilePicture ? PF + profilePicture : PF + "person/noAvatar.png"
-          }
+          src={profilePicture}
           className="profileUserImg"
           alt="cover"
           loading="lazy"
         />
       )}
       <div className="cameraIcon">
-        <label htmlFor="imageUpload">
+        <label htmlFor="picProfile">
           <PhotoCamera
             sx={{
               cursor: "pointer",
@@ -71,9 +69,13 @@ export default function ProfilePic({ profilePicture }) {
           />
           <input
             type="file"
-            id="imageUpload"
+            id="picProfile"
             accept=".png, .jpeg, .jpg"
-            onChange={(e) => setProfileImg(e.target.files[0])}
+            onChange={(e) => {
+              if (e.target.files[0].size > 10 * 1024 * 1024)
+                return alert("File size exceeds 10MB");
+              setProfileImg(e.target.files[0]);
+            }}
             style={{ display: "none" }}
           />
         </label>

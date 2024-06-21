@@ -8,7 +8,6 @@ import { Add, Remove } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 
 const { SERVER_URI } = getConfig();
-const PF = `${SERVER_URI}/Images/`;
 
 export default function ProfileRightBar({ user }) {
   const { user: currentUser, token, logout, followUser } = useAuth();
@@ -40,7 +39,7 @@ export default function ProfileRightBar({ user }) {
 
     setIsLoading(true);
     getFriends();
-  }, [username]);
+  }, [username, token]);
 
   const handlePasswordChange = async () => {
     try {
@@ -163,11 +162,7 @@ export default function ProfileRightBar({ user }) {
                 <div className="rightbarFollowing">
                   <img
                     className="rightbarFollowingImg"
-                    src={
-                      profilePicture
-                        ? PF + profilePicture
-                        : PF + "person/noAvatar.png"
-                    }
+                    src={profilePicture}
                     alt="user"
                     loading="lazy"
                   />

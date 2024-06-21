@@ -7,7 +7,6 @@ import axios from "axios";
 import { Skeleton } from "@mui/material";
 
 const { SERVER_URI } = getConfig();
-const PF = `${SERVER_URI}/Images/`;
 
 const HomeRightBar = () => {
   const { user, token } = useAuth();
@@ -32,7 +31,7 @@ const HomeRightBar = () => {
 
     setIsLoading(true);
     getFriends();
-  }, [username]);
+  }, [username, token]);
 
   return (
     <div className="rightbar">
@@ -40,7 +39,7 @@ const HomeRightBar = () => {
         <div className="birthdayContainer">
           <img
             className="birthdayImg"
-            src={`${PF}gift.png`}
+            src="/assets/gift.png"
             alt="gift"
             loading="lazy"
           />
@@ -51,7 +50,7 @@ const HomeRightBar = () => {
 
         <img
           className="rightbarAd"
-          src={`${PF}meme.gif`}
+          src="/assets/meme.gif"
           alt="ad"
           loading="lazy"
         />
@@ -86,9 +85,7 @@ function OnlineFriend({ friend }) {
         <Link to={`/profile/${username}`}>
           <img
             className="rightbarFriendImg"
-            src={
-              profilePicture ? PF + profilePicture : PF + "person/noAvatar.png"
-            }
+            src={profilePicture}
             alt="friend"
             loading="lazy"
           />

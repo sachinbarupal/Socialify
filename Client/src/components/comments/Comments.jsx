@@ -5,7 +5,6 @@ import { useAuth } from "../../context/AuthContext";
 import { format } from "timeago.js";
 import axios from "axios";
 const { SERVER_URI } = getConfig();
-const PF = `${SERVER_URI}/Images/`;
 
 const Comments = memo(({ comments, setComments, postId }) => {
   const { user, token } = useAuth();
@@ -37,11 +36,8 @@ const Comments = memo(({ comments, setComments, postId }) => {
       <div className="commentInputContainer">
         <img
           className="commentUserImage"
-          src={
-            user.profilePicture
-              ? PF + user.profilePicture
-              : PF + "person/noAvatar.png"
-          }
+          src={user.profilePicture}
+          alt="user"
         />
         <input
           className="commentInput"
@@ -68,7 +64,7 @@ const Comment = ({ comment }) => {
     <div className="comment">
       <img
         className="commentUserImage"
-        src={userImage ? PF + userImage : PF + "person/noAvatar.png"}
+        src={userImage}
         alt="profile"
         loading="lazy"
       />

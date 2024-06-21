@@ -10,9 +10,9 @@ import {
   Event,
   School,
 } from "@mui/icons-material";
-import { memo, useContext, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import axios from "axios";
-import { AuthContext, useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 import getConfig from "../../config";
 import { Skeleton } from "@mui/material";
@@ -100,7 +100,6 @@ const Sidebar = memo(() => {
 export default Sidebar;
 
 const Friend = memo(({ friend }) => {
-  const PF = `${SERVER_URI}/Images/`;
   const { profilePicture, username } = friend;
   return (
     <li className="sidebarFriend">
@@ -108,9 +107,7 @@ const Friend = memo(({ friend }) => {
         <img
           className="sidebarFriendImg"
           loading="lazy"
-          src={
-            profilePicture ? PF + profilePicture : PF + "person/noAvatar.png"
-          }
+          src={profilePicture}
           alt="friend"
         />
       </Link>

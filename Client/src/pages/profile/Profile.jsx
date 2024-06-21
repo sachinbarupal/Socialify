@@ -12,7 +12,6 @@ import ProfileRightBar from "../../components/rightbar/ProfileRightBar";
 import { CircularProgress } from "@mui/material";
 import ProfilePic from "./ProfilePic";
 const { SERVER_URI } = getConfig();
-const PF = `${SERVER_URI}/Images/`;
 
 export default function Profile() {
   const { token } = useAuth();
@@ -62,11 +61,9 @@ export default function Profile() {
           <div className="profileRightTop">
             <div className="profileCover">
               <img
-                src={
-                  coverPicture ? PF + coverPicture : PF + "person/noCover.jpg"
-                }
+                src={coverPicture}
                 className="profileCoverImg"
-                alt="user"
+                alt="cover"
                 loading="lazy"
               />
 

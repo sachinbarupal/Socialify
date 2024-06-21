@@ -13,7 +13,6 @@ import getConfig from "../../config";
 const { SERVER_URI } = getConfig();
 
 const Share = memo(() => {
-  const PF = `${SERVER_URI}/Images/`;
   const { user, token } = useAuth();
   const description = useRef();
   const [Image, setImage] = useState(null);
@@ -35,11 +34,11 @@ const Share = memo(() => {
         const data = new FormData();
         const imageName = Date.now() + Image.name;
         data.append("name", imageName);
-        data.append("Image", Image);
+        data.append("folder", "Posts");
+        data.append("imageFile", Image);
 
-        newPost.Image = imageName;
-
-        await axios.post(`${SERVER_URI}/api/upload`, data);
+        const res = await axios.post(`${SERVER_URI}/api/upload`, data);
+        newPost.Image = res.data.image;
       }
 
       await axios.post(`${SERVER_URI}/api/posts/create`, newPost, {
@@ -58,9 +57,7 @@ const Share = memo(() => {
       <div className="shareWrapper">
         <div className="shareTop">
           <img
-            src={
-              profilePicture ? PF + profilePicture : PF + "person/noAvatar.png"
-            }
+            src={profilePicture}
             className="shareProfileImg"
             alt="profile"
             loading="lazy"
@@ -100,7 +97,11 @@ const Share = memo(() => {
                 type="file"
                 id="imageUpload"
                 accept=".png, .jpeg, .jpg"
-                onChange={(e) => setImage(e.target.files[0])}
+                onChange={(e) => {
+                  if (e.target.files[0].size > 10 * 1024 * 1024)
+                    return alert("File size exceeds 10MB");
+                  setImage(e.target.files[0]);
+                }}
                 style={{ display: "none" }}
               />
             </label>
