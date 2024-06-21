@@ -67,7 +67,7 @@ export default function Profile() {
                 loading="lazy"
               />
 
-              <ProfilePic profilePicture={profilePicture} />
+              <ProfilePic user={user} />
             </div>
             <div className="profileInfo">
               <h4 className="profileInfoName">{username}</h4>

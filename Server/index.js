@@ -44,12 +44,14 @@ app.use(morgan("common"));
 const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
 const postRoutes = require("./routes/posts");
+const conversationRoutes = require("./routes/conversations");
 const uploadRoutes = require("./routes/fileUpload");
 
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/conversation", conversationRoutes);
 
 const PORT = process.env.PORT || 6000;
 // Start Server at PORT

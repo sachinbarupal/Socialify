@@ -1,14 +1,20 @@
-// import getConfig from "../../config";
-// import "./message.css";
-// const { SERVER_URI } = getConfig();
-// export default function Message() {
-//   return (
-//     <div className="message">
-//       <div className="messageTop">
-//         <img className="messageImage" src={ "/assets/noAvatar.png"} />
-//         <p>This is a message</p>
-//       </div>
-//       <div className="messageBottom"></div>
-//     </div>
-//   );
-// }
+import "./message.css";
+export default function Message({ own }) {
+  return (
+    <div className={own ? "message own" : "message"}>
+      <div className="messageTop">
+        {!own && (
+          <img
+            className="messageImg"
+            alt="user"
+            loading="lazy"
+            src={"/assets/noAvatar.png"}
+          />
+        )}
+        <p className="messageText">Hello this is message</p>
+      </div>
+
+      <div className="messageBottom">1 hour ago</div>
+    </div>
+  );
+}

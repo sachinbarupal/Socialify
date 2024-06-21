@@ -7,9 +7,10 @@ import axios from "axios";
 
 const { SERVER_URI } = getConfig();
 
-export default function ProfilePic({ profilePicture }) {
+export default function ProfilePic({ user }) {
   const [profileImg, setProfileImg] = useState(null);
-  const { token, updateUser } = useAuth();
+  const { profilePicture, username } = user;
+  const { user: currentUser, token, updateUser } = useAuth();
 
   const handleUpload = async () => {
     try {
@@ -55,57 +56,59 @@ export default function ProfilePic({ profilePicture }) {
           loading="lazy"
         />
       )}
-      <div className="cameraIcon">
-        <label htmlFor="picProfile">
-          <PhotoCamera
-            sx={{
-              cursor: "pointer",
-              color: "white",
-              backgroundColor: "black",
-              fontSize: "30px",
-              borderRadius: "50%",
-              padding: "2px",
-            }}
-          />
-          <input
-            type="file"
-            id="picProfile"
-            accept=".png, .jpeg, .jpg"
-            onChange={(e) => {
-              if (e.target.files[0].size > 10 * 1024 * 1024)
-                return alert("File size exceeds 10MB");
-              setProfileImg(e.target.files[0]);
-            }}
-            style={{ display: "none" }}
-          />
-        </label>
-        {profileImg && (
-          <div onClick={handleUpload}>
-            <Done
+      {username === currentUser.username && (
+        <div className="cameraIcon">
+          <label htmlFor="picProfile">
+            <PhotoCamera
               sx={{
                 cursor: "pointer",
-                color: "green",
-                border: "1px solid green",
+                color: "white",
+                backgroundColor: "black",
+                fontSize: "30px",
                 borderRadius: "50%",
-                marginLeft: "5px",
+                padding: "2px",
               }}
             />
-          </div>
-        )}
-        {profileImg && (
-          <div onClick={() => setProfileImg(null)}>
-            <Clear
-              sx={{
-                cursor: "pointer",
-                color: "red",
-                border: "1px solid red",
-                borderRadius: "50%",
-                marginLeft: "5px",
+            <input
+              type="file"
+              id="picProfile"
+              accept=".png, .jpeg, .jpg"
+              onChange={(e) => {
+                if (e.target.files[0].size > 10 * 1024 * 1024)
+                  return alert("File size exceeds 10MB");
+                setProfileImg(e.target.files[0]);
               }}
+              style={{ display: "none" }}
             />
-          </div>
-        )}
-      </div>
+          </label>
+          {profileImg && (
+            <div onClick={handleUpload}>
+              <Done
+                sx={{
+                  cursor: "pointer",
+                  color: "green",
+                  border: "1px solid green",
+                  borderRadius: "50%",
+                  marginLeft: "5px",
+                }}
+              />
+            </div>
+          )}
+          {profileImg && (
+            <div onClick={() => setProfileImg(null)}>
+              <Clear
+                sx={{
+                  cursor: "pointer",
+                  color: "red",
+                  border: "1px solid red",
+                  borderRadius: "50%",
+                  marginLeft: "5px",
+                }}
+              />
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 }
