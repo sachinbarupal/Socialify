@@ -1,6 +1,7 @@
 const configs = {
   development: {
     SERVER_URI: "http://localhost:4000",
+    SOCKET_URI: "ws://localhost:8000",
   },
   production: {
     SERVER_URI: "https://socialify-1-qixe.onrender.com",

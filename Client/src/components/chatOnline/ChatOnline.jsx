@@ -1,19 +1,19 @@
 import "./chatOnline.css";
-export default function ChatOnline() {
+export default function ChatOnline({ user }) {
   return (
     <div className="chatOnline">
       <div className="chatOnlineFriend">
         <div className="chatOnlineImgContainer">
           <img
             className="chatOnlineImg"
-            src="/assets/noAvatar.png"
+            src={user.profilePicture}
             alt="user"
             loading="lazy"
           />
           <div className="chatOnlineBadge"></div>
         </div>
 
-        <span className="chatOnlineName">Sachin</span>
+        <span className="chatOnlineName">{user.username}</span>
       </div>
     </div>
   );

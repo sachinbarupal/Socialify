@@ -1,14 +1,16 @@
+import { memo } from "react";
 import "./conversation.css";
-export default function Conversation() {
+const Conversation = memo(({ conversation }) => {
   return (
     <div className="conversation">
       <img
         className="chatUserImage"
-        src="/assets/noAvatar.png"
+        src={conversation.profilePicture}
         alt="user"
         loading="lazy"
       />
-      <span className="chatUsername">Sachin</span>
+      <span className="chatUsername">{conversation.username}</span>
     </div>
   );
-}
+});
+export default Conversation;

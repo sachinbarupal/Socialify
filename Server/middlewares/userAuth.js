@@ -10,6 +10,7 @@ const userAuth = (req, res, next) => {
     if (!validate.email) return res.status(403).json({ msg: "Invalid Token" });
 
     req.email = validate.email;
+    req._id = validate._id;
     next();
   } catch (err) {
     console.log("Error in UserAuth", err);
