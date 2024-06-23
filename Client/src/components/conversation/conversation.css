@@ -5,8 +5,16 @@
   cursor: pointer;
   margin-top: 20px;
 }
-.conversation:hover {
+.conversation.current {
   background-color: rgb(245, 243, 243);
+  /* background-color: lightgray; */
+}
+.conversation.current:hover {
+  background-color: rgb(245, 243, 243);
+  /* background-color: lightgray; */
+}
+.conversation:hover {
+  background-color: rgba(245, 243, 243, 0.5);
 }
 .chatUserImage {
   width: 40px;

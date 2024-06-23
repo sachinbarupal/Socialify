@@ -4,7 +4,7 @@ const { SERVER_URI } = getConfig();
 
 export const loginCall = async (userCredentials, login) => {
   try {
-    console.log(userCredentials);
+    // console.log(userCredentials);
     const res = await axios.post(
       `${SERVER_URI}/api/auth/login`,
       userCredentials

@@ -47,17 +47,22 @@ const Topbar = memo(function () {
           {/* PERSON */}
           <div className="topBarIcon">
             <Person />
-            <span className="topBarIconBadge">1</span>
+            {/* <span className="topBarIconBadge">1</span> */}
           </div>
           {/* CHAT */}
-          <div className="topBarIcon">
-            <Chat />
-            <span className="topBarIconBadge">2</span>
-          </div>
+          <Link
+            to="/messenger"
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <div className="topBarIcon">
+              <Chat />
+              <span className="topBarIconBadge">2</span>
+            </div>
+          </Link>
           {/* NOTIFICATION */}
           <div className="topBarIcon">
             <Notifications />
-            <span className="topBarIconBadge">1</span>
+            {/* <span className="topBarIconBadge">1</span> */}
           </div>
         </div>
 

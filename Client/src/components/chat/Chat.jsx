@@ -31,7 +31,8 @@ export default function Chat({ chat, socket }) {
 
   useEffect(() => {
     const handleGetMessage = (data) => {
-      if (data.sender === chat.user._id) {
+      // console.log("Message Aaya", data);
+      if (data.sender === chat._id) {
         setMessages((prev) => [...prev, data]);
       }
     };
@@ -42,16 +43,14 @@ export default function Chat({ chat, socket }) {
     return () => {
       socket.current.off("getMessage", handleGetMessage);
     };
-  }, [chat]);
-
-  if (isLoading) return <>Loading....</>;
+  }, [chat, socket]);
 
   const handleMessage = async () => {
     try {
       if (newMessage.current.value === "") return alert("Type Some Message");
 
       const res = await axios.post(
-        `${SERVER_URI}/api/message/create`,
+        `${SERVER_URI}/api/message/create/${chat._id}`,
         {
           text: newMessage.current.value,
           conversationId: chat._id,
@@ -60,7 +59,7 @@ export default function Chat({ chat, socket }) {
       );
       socket.current.emit("sendMessage", {
         senderId: user._id,
-        receiverId: chat.user._id,
+        receiverId: chat._id,
         text: newMessage.current.value,
         createdAt: res.data.createdAt,
         _id: res.data._id,
@@ -74,22 +73,28 @@ export default function Chat({ chat, socket }) {
 
   return (
     <>
-      <div className="chatBoxTop">
-        {messages.map((message) => (
-          <div key={message._id} ref={scrollRef}>
-            <Message user={chat.user} message={message} />
-          </div>
-        ))}
-      </div>
+      {isLoading ? (
+        <div>Loading....</div>
+      ) : (
+        <div className="chatBoxTop">
+          {messages.map((message) => (
+            <div key={message._id} ref={scrollRef}>
+              <Message user={chat} message={message} />
+            </div>
+          ))}
+        </div>
+      )}
       <div className="chatBoxBottom">
         <textarea
           ref={newMessage}
           className="chatMessageInput"
           placeholder="Write a Message..."
         />
-        <button className="chatSubmitBtn" onClick={handleMessage}>
-          Send
-        </button>
+        <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
+          <button className="chatSubmitBtn" onClick={handleMessage}>
+            Send
+          </button>
+        </div>
       </div>
     </>
   );

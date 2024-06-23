@@ -19,11 +19,12 @@
 .messageText {
   padding: 10px;
   border-radius: 20px;
-  background-color: #1877f2;
-  color: white;
+  background-color: lightgray;
+  color: black;
   max-width: 300px;
   word-wrap: break-word;
   white-space: normal;
+  cursor: pointer;
 }
 
 .messageBottom {
@@ -35,6 +36,6 @@
   align-items: flex-end;
 }
 .message.own .messageText {
-  background-color: rgb(245, 241, 241);
-  color: black;
+  background-color: #1877f2;
+  color: white;
 }

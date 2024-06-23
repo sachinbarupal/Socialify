@@ -20,7 +20,7 @@ const getUser = (userId) => {
 };
 
 io.on("connection", (socket) => {
-  console.log("A User Connected !!");
+  // console.log("A User Connected !!");
   //   io.emit("welcome", "Hello Bro");.
   // Take SocketId and userIDs
   socket.on("addUser", (user) => {
@@ -29,6 +29,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendMessage", ({ senderId, receiverId, text, createdAt, _id }) => {
+    // console.log(receiverId);
     const receiver = getUser(receiverId);
     // console.log(receiver);
 
@@ -42,7 +43,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("A User Disconnected");
+    // console.log("A User Disconnected");
     removeUser(socket.id);
     io.emit("onlineUsers", sockets);
   });

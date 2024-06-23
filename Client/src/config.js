@@ -5,6 +5,7 @@ const configs = {
   },
   production: {
     SERVER_URI: "https://socialify-1-qixe.onrender.com",
+    SOCKET_URI: "https://socialify-websocket.onrender.com",
   },
 };
 

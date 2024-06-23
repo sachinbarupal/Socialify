@@ -9,7 +9,7 @@ const router = require("express").Router();
 router.post("/create", userAuth, async (req, res) => {
   try {
     const recieverId = req.body.senderId;
-    const senderId = req.body.recieverId;
+    const senderId = req._id;
 
     if (!recieverId || !senderId)
       return res.status(403).json({ msg: "Wrong Inputs!!" });
@@ -28,8 +28,7 @@ router.post("/create", userAuth, async (req, res) => {
 // Get Converstion
 router.get("/", userAuth, async (req, res) => {
   try {
-    const email = req.email;
-    const { _id } = await User.findOne({ email });
+    const _id = req._id;
 
     const conversations = await Conversation.find({
       members: { $in: [_id] },

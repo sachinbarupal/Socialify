@@ -28,24 +28,41 @@ export default function Messenger() {
       profilePicture: user.profilePicture,
     });
     socket.current.on("onlineUsers", (sockets) => {
-      // console.log(sockets.filter((socket) => socket.user._id !== user._id));
+      // console.log(sockets);
       setOnlineUsers(sockets.filter((socket) => socket.user._id !== user._id));
     });
   }, [user]);
 
-  useEffect(() => {
-    const getConversations = async () => {
-      try {
-        const res = await axios.get(`${SERVER_URI}/api/conversation/`, {
-          headers: { Authorization: token },
-        });
-        setConversations(res.data);
-      } catch (err) {
-        console.log("Error in Fetching Conversations", err);
-      }
-    };
+  // useEffect(() => {
+  //   const getConversations = async () => {
+  //     try {
+  //       const res = await axios.get(`${SERVER_URI}/api/conversation/`, {
+  //         headers: { Authorization: token },
+  //       });
+  //       setConversations(res.data);
+  //       console.log(res.data);
+  //     } catch (err) {
+  //       console.log("Error in Fetching Conversations", err);
+  //     }
+  //   };
 
-    getConversations();
+  //   getConversations();
+  // }, [token]);
+
+  useEffect(() => {
+    const fetchAll = async () => {
+      const users = await axios.get(`${SERVER_URI}/api/users/all`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      // console.log(users.data);
+      setConversations(users.data);
+      // setUsers(users.data);
+      // setIsLoading(false);
+    };
+    // setIsLoading(true);
+    fetchAll();
   }, [token]);
 
   return (
@@ -63,7 +80,11 @@ export default function Messenger() {
                 key={conversation._id}
                 onClick={() => setCurrentChat(conversation)}
               >
-                <Conversation conversation={conversation.user} />
+                <Conversation
+                  socket={socket}
+                  current={currentChat?._id}
+                  conversation={conversation}
+                />
               </div>
             ))}
           </div>
@@ -81,16 +102,14 @@ export default function Messenger() {
           </div>
         </div>
 
-        <div className="chatOnline">
+        {/* <div className="chatOnline">
           <div className="chatOnlineWrapper">
             {onlineUsers.map((socket) => (
               <ChatOnline key={socket.user._id} user={socket.user} />
             ))}
-            {/* <ChatOnline /> */}
           </div>
-        </div>
+        </div> */}
       </div>
-      ;
     </>
   );
 }
